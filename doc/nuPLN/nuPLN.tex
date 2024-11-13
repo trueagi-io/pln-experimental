@@ -1,0 +1,118 @@
+%% Towards a complete formalization of PLN
+%%
+%% Render with: ./render.sh
+
+\documentclass[]{article}
+\usepackage{url}
+\usepackage{minted}
+\usepackage[hyperindex,breaklinks]{hyperref}
+\usepackage{breakurl}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=false,frame=single}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[skip=0pt]{subcaption}
+\usepackage{circledsteps}
+\usepackage{amsfonts}
+
+\begin{document}
+
+\newcommand{\nuPLN}{\nu\textup{PLN}}
+%% \newcommand{\Bool}{\mathbb{B}}
+\newcommand{\Bool}{\textup{Bool}}
+%% \newcommand{\Bool}{B}
+\newcommand{\T}{\top}
+\newcommand{\F}{\bot}
+\newcommand{\Domain}{\mathcal{D}}
+\newcommand{\Language}{\mathcal{L}}
+\newcommand{\Model}{M}
+\newcommand{\Data}{D_{x\in\Domain}}
+
+\title{Towards a Complete Formalization of PLN\\
+  \texttt{(DRAFT)}} \author{Nil Geisweiller}
+\maketitle
+
+\section{Introduction}
+The goal is similar to Solomonoff Universal Induction~\cite{TODO},
+that is we want to approach a first order (unknown but computable)
+distribution $\mu$ given observations, using a second order
+(uncomputable but known) distribution $\nu$, called the Universal
+Distribution.  In Solomonoff Induction, observations are bit strings
+produced by a Turing machine\footnote{Note that even though the sample
+space of $\nu$ is made of deterministic Turing machines, $\nu$ can
+approximate any computable distribution $\mu$ (thus non-deterministic)
+by maintaining an ensemble of such Turing machines.}.  In PLN however,
+observations are outcomes from an indexed boolean random variable,
+representing the outputs of evaluating a predicate on some inputs.
+Such predicate is called the \emph{observable predicate}.  In practice
+PLN allows multiple observable predicates however one can assume one
+predicate without loss of generality.  Indeed, to emulate multiple
+predicates, one can introduce an extra component in the predicate's
+domain to ``select'' the predicate of interest.  Also, since it is
+observed by a random variable, such predicate is not necessarily
+deterministic (though it could be).  As such, one may think of the
+observable predicate as being a program drawn from a certain
+Probabilistic Programming Language.  In the following section we
+formally define the above.
+
+Because this reformulation of PLN departs somewhat from the definition
+of PLN in the PLN book~\cite{TODO}, we give it a new name, $\nuPLN$.
+
+\section{Definitions}
+Given an observable predicate $\mu$ with domain $\Domain$, let
+$(\Omega_\nu, \mathcal{F_\nu}, \nu)$ be a probability space such that
+\begin{itemize}
+\item $\nu$ is a universal distribution further defined below.
+\item $\mathcal{F_\nu}$ is the event space associated to $\nu$.
+\item $\Omega_\nu$ is the sample space associated to $\nu$, containing
+  mappings of inputs to outputs, that is records of evaluations of
+  $\mu$ from $\Domain$ to its Boolean co-domain, as well as all
+  potential definitions of $\mu$\footnote{Those familiar with
+  Solomonoff Universal Induction, please note that here $\mu$
+  represents a probabilistic predicate rather than a computable
+  probability function calculating the probability of any event,
+  although the latter can be derived from the former.}.
+\end{itemize}
+Since $\mu$ is a probabilistic predicate, its type signature cannot
+merely be
+$$\mu : \Domain \to \Bool$$ where $\Bool = \{\F, \T\}$.  To capture
+its probabilistic nature we give it the following type signature
+$$\mu : \Domain \to \Omega \to \Bool$$ in a curried fashion.  Meaning
+that given its argument, it produces a boolean random variable.
+Therefore the observable predicate can be viewed as an indexed boolean
+random variable.  Also, in cases where the domain $\Domain$ can be
+decomposed into multiple components, a curried notation will be
+preferred.  So instead of
+$$\mu : (\Domain_1 \times \dots \times \Domain_n) \to \Omega \to \Bool$$
+the following
+$$\mu : \Domain_1 \to \dots \to \Domain_n \to \Omega \to \Bool$$ will
+be used.  This will be convenient to express inheritance relationships
+between partially applied predicates.  In case $\mu$ is known to be
+deterministic, $\Omega$ could potentially be dropped, but that is not
+going to be our working assumption for now.  With that, let us now
+define key random variables to access $\Omega$:
+\begin{itemize}
+\item $\Model : \Omega \to \Language$, where $\Language$ is a certain
+  probabilistic programming language.  Thus, $\Model$ takes a particular
+  world $\omega \in \Omega$ and outputs the probabilistic program $\mu
+  \in \Language$ generating that world.  Note that this random
+  variable is inaccessible from an observer within that world.  An
+  observer within that world only has access to a finite record of
+  evaluations of $\mu$.  However, that random variable will be
+  convenient to define some aspects of the semantics of $\nuPLN$.
+\item $\Data : \Omega \to \Bool$, a family of boolean random variables
+  indexed by values in $\Domain$, the predicate inputs.  Unlike
+  $\Model$, $\Data$ is at least partially accessible from an observer
+  within that world.  Meaning, such observer can gather data for a
+  finite subset of $\Domain$.  Fortunately, $\Model$ and $\Data$ are
+  related in the following way NEXT
+\end{itemize}
+\section{conclusion}
+
+\bibliographystyle{splncs04}
+\bibliography{local}
+
+\end{document}
