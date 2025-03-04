@@ -67,11 +67,11 @@ $(\Omega_\nu, \mathcal{F_\nu}, \nu)$ be a probability space such that
 \begin{itemize}
 \item $\nu$ is a universal distribution further defined below.
 \item $\mathcal{F_\nu}$ is the event space associated to $\nu$.
-\item $\Omega_\nu$ is the sample space associated to $\nu$, containing
-  mappings of inputs to outputs, that is records of evaluations of
-  $\mu$ from $\Domain$ to its Boolean co-domain, as well as all
-  potential definitions of $\mu$\footnote{Those familiar with
-  Solomonoff Universal Induction, please note that here $\mu$
+\item $\Omega_\nu$ (or simply $\Omega$) is the sample space associated
+  to $\nu$, containing mappings of inputs to outputs, that is records
+  of evaluations of $\mu$ from $\Domain$ to its Boolean co-domain, as
+  well as all potential definitions of $\mu$\footnote{Those familiar
+  with Solomonoff Universal Induction, please note that here $\mu$
   represents a probabilistic predicate rather than a computable
   probability function calculating the probability of any event,
   although the latter can be derived from the former.}.
@@ -90,10 +90,16 @@ $$\mu : (\Domain_1 \times \dots \times \Domain_n) \to \Omega \to \Bool$$
 the following
 $$\mu : \Domain_1 \to \dots \to \Domain_n \to \Omega \to \Bool$$ will
 be used.  This will be convenient to express inheritance relationships
-between partially applied predicates.  In case $\mu$ is known to be
-deterministic, $\Omega$ could potentially be dropped, but that is not
-going to be our working assumption for now.  With that, let us now
-define key random variables to access $\Omega$:
+between partially applied predicates.  Remaining close to functional
+programming conventions, applying $\mu$ to an input $x$ will be
+denoted
+$$(\mu\ x)$$ Likewise, $\mu$ applied to more than two arguments will
+be denoted
+$$(\mu\ x\ \omega)$$ and so on.
+In case $\mu$ is known to be deterministic, $\Omega$ could
+potentially be dropped, but that is not going to be our working
+assumption for now.  With that, let us now define key random variables
+to access $\Omega$:
 \begin{itemize}
 \item $\Model : \Omega \to \Language$, where $\Language$ is a certain
   probabilistic programming language.  Thus, $\Model$ takes a particular
@@ -108,7 +114,15 @@ define key random variables to access $\Omega$:
   $\Model$, $\Data$ is at least partially accessible from an observer
   within that world.  Meaning, such observer can gather data for a
   finite subset of $\Domain$.  Fortunately, $\Model$ and $\Data$ are
-  related in the following way NEXT
+  related in the following way
+  $$(\mu\ x\ \omega) = (D_x\ \omega)$$ where $\omega$ runs over all
+  elements of $\Omega$ such that $(M\ \omega) = \mu$.
+  %% Thus,
+  %% equivalently and more formally
+  %% $$\forall \omega \in \Omega, \mu \in \Language, x\in \Domain,
+  %% (M\ \omega) = \mu \Rightarrow (\mu\ x\ \omega) =
+  %% (\Domain_x\ \omega)$$
+  %% In other words, $D$ provides a window into the behavior of $\mu$.
 \end{itemize}
 \section{conclusion}
 
