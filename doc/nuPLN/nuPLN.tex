@@ -28,6 +28,7 @@
 \newcommand{\F}{\bot}
 \newcommand{\Domain}{\mathcal{D}}
 \newcommand{\Language}{\mathcal{L}}
+\newcommand{\Event}{\mathcal{F}}
 \newcommand{\Model}{M}
 \newcommand{\Data}{D_{x\in\Domain}}
 
@@ -66,7 +67,7 @@ Given an observable predicate $\mu$ with domain $\Domain$, let
 $(\Omega_\nu, \mathcal{F_\nu}, \nu)$ be a probability space such that
 \begin{itemize}
 \item $\nu$ is a universal distribution further defined below.
-\item $\mathcal{F_\nu}$ is the event space associated to $\nu$.
+\item $\Event_\nu$ is the event space associated to $\nu$.
 \item $\Omega_\nu$ (or simply $\Omega$) is the sample space associated
   to $\nu$, containing mappings of inputs to outputs, that is records
   of evaluations of $\mu$ from $\Domain$ to its Boolean co-domain, as
@@ -95,11 +96,13 @@ programming conventions, applying $\mu$ to an input $x$ will be
 denoted
 $$(\mu\ x)$$ Likewise, $\mu$ applied to more than two arguments will
 be denoted
-$$(\mu\ x\ \omega)$$ and so on.
-In case $\mu$ is known to be deterministic, $\Omega$ could
-potentially be dropped, but that is not going to be our working
-assumption for now.  With that, let us now define key random variables
-to access $\Omega$:
+$$(\mu\ x\ \omega)$$ and so on.  I know this notation for function
+application is unconventional in the context of probability theory,
+but using a currying-friendly one is going to be useful as we progress
+and I wish to retain a fixed convention throughout the document.  In
+case $\mu$ is known to be deterministic, $\Omega$ could potentially be
+dropped, but that is not going to be our working assumption for now.
+With that, let us now define key random variables to access $\Omega$:
 \begin{itemize}
 \item $\Model : \Omega \to \Language$, where $\Language$ is a certain
   probabilistic programming language.  Thus, $\Model$ takes a particular
@@ -113,8 +116,8 @@ to access $\Omega$:
   indexed by values in $\Domain$, the predicate inputs.  Unlike
   $\Model$, $\Data$ is at least partially accessible from an observer
   within that world.  Meaning, such observer can gather data for a
-  finite subset of $\Domain$.  Fortunately, $\Model$ and $\Data$ are
-  related in the following way
+  finite subset of $\Domain$.  $\Model$ and $\Data$ are related by the
+  following equality
   $$(\mu\ x\ \omega) = (D_x\ \omega)$$ where $\omega$ runs over all
   elements of $\Omega$ such that $(M\ \omega) = \mu$.
   %% Thus,
@@ -124,6 +127,32 @@ to access $\Omega$:
   %% (\Domain_x\ \omega)$$
   %% In other words, $D$ provides a window into the behavior of $\mu$.
 \end{itemize}
+Since the distribution of observations is entirely determined by a
+model, it suffices to define $\nu$ in terms of the distribution of
+models.  In other words, it suffices to define a distribution over
+$\Language$, the prior distribution, to define $\nu$.  Then relating
+observations to models will be done using regular Bayesian inference.
+Let us denote the probability space of this prior as
+
+$$(\Language, \Event_\Language, \nu_\Language)$$
+
+\begin{itemize}
+\item $\nu_\Language$ is a distribution over $\Language$.
+\item $\Event_\Language$ is the event space associated to
+  $\nu_\Language$.
+\item $\Language$ is the sample space of $\nu_\Language$.
+\end{itemize}
+If you wonder why I am being so pedantic, carefully defining the
+probability space over $\Language$, it is because $\Language$ is not
+going to be your average discreet Turing machine language.  For the
+purpose of recovering PLN with this Bayesian approach, $\Language$
+will have to be continuous.  I will explain in detail why, but before
+that let us provide the definition of $\nu$ in terms of its prior
+$\nu_\Language$
+
+$$NEXT$$
+%% $$\nu : \Event \to [0, 1]$$
+
 \section{conclusion}
 
 \bibliographystyle{splncs04}
