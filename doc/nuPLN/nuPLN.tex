@@ -99,13 +99,15 @@ between partially applied predicates.  Applying $\mu$ to an input $x$
 will be denoted with the following functional programming notation
 $$(\mu\ x)$$ Likewise, $\mu$ applied to more than two arguments will
 be denoted
-$$(\mu\ x\ \omega)$$ and so on.  For $\mu$ we use such functional
-programming notation is used because it is currying-friendly.  For the
-rest we use the traditional function application notation, such as
-$$\nu(E)$$ In case $\mu$ is known to be deterministic, $\Omega$ could
-potentially be dropped, but that is not going to be our working
-assumption for now.  With that, let us now define key random variables
-to access $\Omega$:
+$$(\mu\ x\ \omega)$$ and so on.  For $\mu$ such functional programming
+notation is used because it is currying-friendly.  For the rest, we
+keep using the traditional mathematical function application notation,
+such as
+$$\nu(E)$$ denoting the application of the probability distribution
+$\nu$ to the event $E$.  In case $\mu$ is known to be deterministic,
+$\Omega$ could potentially be dropped, but that is not going to be our
+working assumption for now.  With that, let us now define key random
+variables to access $\Omega$:
 \begin{itemize}
 \item $\Model : \Omega \to \Language$ with measurable space
   $(\Language, \Event_\Language)$, where $\Language$ is a certain
@@ -134,33 +136,33 @@ to access $\Omega$:
 \end{itemize}
 Due to the equality above, the distribution of observations is
 entirely determined by a model.  In other words, it suffices to define
-a distribution over $\Language$, the prior distribution, to define
-$\nu$, as far as $M$ and $\Data$ are concerned anyway.  Then, relating
-observations to models can be done using regular Bayesian inference.
-The prior is thus defined by
-$$\nu(M \in L)$$
+a distribution over $\Language$, the prior, to define $\nu$ (as far as
+$M$ and $\Data$ are concerned anyway).  Then, relating observations to
+models can be done using regular Bayesian inference.  The prior is
+thus defined by
+$$\nu(M \in L)$$ where $L \in \Event_\Language$.  How to precisely
+define the prior is discussed in~\ref{TODO}, but in general it should
+be viewed as a parameter of $\nuPLN$.  That is, given a certain prior
+of $\nu$ over $\Language$, one can derive a certain version of
+$\nuPLN$.  NEXT: express Bayesian inference on $\nu$.
 
+%% Let us denote the probability space of this prior as
+%% $$(\Language, \Event_\Language, \nu_\Language)$$
+%% \begin{itemize}
+%% \item $\nu_\Language$ is a distribution over $\Language$.
+%% \item $\Event_\Language$ is the event space associated to
+%%   $\nu_\Language$.
+%% \item $\Language$ is the sample space of $\nu_\Language$.
+%% \end{itemize}
+%% If you wonder why I am being so pedantic, carefully defining the
+%% probability space over $\Language$, it is because $\Language$ is not
+%% going to be your average discreet Turing machine language.  For the
+%% purpose of recovering PLN with this Bayesian approach, $\Language$
+%% will have to be continuous.  I will explain in detail why, but before
+%% that let us provide the definition of $\nu$ in terms of its prior
+%% $\nu_\Language$
 
-Let us denote the probability space
-of this prior as
-
-$$(\Language, \Event_\Language, \nu_\Language)$$
-
-\begin{itemize}
-\item $\nu_\Language$ is a distribution over $\Language$.
-\item $\Event_\Language$ is the event space associated to
-  $\nu_\Language$.
-\item $\Language$ is the sample space of $\nu_\Language$.
-\end{itemize}
-If you wonder why I am being so pedantic, carefully defining the
-probability space over $\Language$, it is because $\Language$ is not
-going to be your average discreet Turing machine language.  For the
-purpose of recovering PLN with this Bayesian approach, $\Language$
-will have to be continuous.  I will explain in detail why, but before
-that let us provide the definition of $\nu$ in terms of its prior
-$\nu_\Language$
-
-$$NEXT$$
+%% $$NEXT$$
 %% $$\nu : \Event \to [0, 1]$$
 
 \section{conclusion}
