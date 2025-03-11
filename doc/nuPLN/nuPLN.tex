@@ -85,8 +85,11 @@ its probabilistic nature we give it the following type signature
 $$\mu : \Domain \to \Omega \to \Bool$$ in a curried fashion.  Meaning
 that given its argument, it produces a boolean random variable.
 Therefore the observable predicate can be viewed as an indexed boolean
-random variable.  Also, in cases where the domain $\Domain$ can be
-decomposed into multiple components, a curried notation will be
+random variable.  Of course, $\mu$ never gets to be evaluated on a
+different world than the one it belongs to, but we still need to keep
+the $\Omega$ argument in order to reason about possible worlds since
+the true world is unknown.  Also, in cases where the domain $\Domain$
+can be decomposed into multiple components, a curried notation will be
 preferred.  So instead of
 $$\mu : (\Domain_1 \times \dots \times \Domain_n) \to \Omega \to \Bool$$
 the following
