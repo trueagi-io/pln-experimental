@@ -27,10 +27,12 @@
 \newcommand{\T}{\top}
 \newcommand{\F}{\bot}
 \newcommand{\Domain}{\mathcal{D}}
+\newcommand{\Subdomain}{\mathcal{S}}
 \newcommand{\Language}{\mathcal{L}}
 \newcommand{\Event}{\mathcal{F}}
 \newcommand{\Model}{M}
 \newcommand{\Data}{D_{x\in\Domain}}
+\newcommand{\DataS}{D_\Subdomain}
 
 \title{Towards a Complete Formalization of PLN\\
   \texttt{(DRAFT)}} \author{Nil Geisweiller}
@@ -63,20 +65,35 @@ Because this reformulation of PLN departs somewhat from the definition
 of PLN in the PLN book~\cite{TODO}, we give it a new name, $\nuPLN$.
 
 \section{Definitions}
+
+In its original form, PLN purposely avoids relying on an underlying
+global probability distribution.  I am not against this in principle.
+I will simply admit that I cannot conceive a complete definition of
+PLN that does not rely on such global probability distribution.  I
+would also point out that a publication released after the PLN book by
+the principal authors of the PLN book, Ben Goertzel and Matt Ikle,
+very much aligns with the idea of a global probability
+distribution~\cite{TODO}, and was in fact a great source of
+inspiration for writing this very document.  The next subsection is
+dedicated to define the global probability distribution which $\nuPLN$
+is intended to derive from.
+
+\subsection{Global Probability Distribution Underlying $\nuPLN$}
 Given an observable predicate $\mu$ with domain $\Domain$, let
 $(\Omega, \Event, \nu)$ be a probability space such that
 \begin{itemize}
 \item $\Event$ is the event space, a $\sigma$-algebra on $\Omega$.
 \item $\nu : \Event \to [0, 1]$ is a universal distribution, further
   defined below.
-\item $\Omega$ is the sample space associated to $\nu$, containing
-  mappings of inputs to outputs, that is records of evaluations of
-  $\mu$ from $\Domain$ to its Boolean co-domain, as well as all
-  potential definitions of $\mu$\footnote{Those familiar with
-  Solomonoff Universal Induction, please note that here $\mu$
-  represents a probabilistic predicate rather than a computable
+\item $\Omega$ is the sample space associated to $\nu$, such that each
+  element $\omega \in \Omega$ contains a model $\mu$\footnote{Those
+  familiar with Solomonoff Universal Induction, please note that here
+  $\mu$ represents a probabilistic predicate rather than a computable
   probability function calculating the probability of any event,
-  although the latter can be derived from the former.}.
+  although the latter can be derived from the former.}, a
+  probabilistic predicate over a certain domain $\Domain$, as well as
+  the complete mapping of $\mu$ from $\Domain$ to its Boolean
+  co-domain.
 \end{itemize}
 Since $\mu$ is a probabilistic predicate, its type signature cannot
 merely be
@@ -88,9 +105,9 @@ Therefore the observable predicate can be viewed as an indexed boolean
 random variable.  Of course, $\mu$ never gets to be evaluated on a
 different world than the one it belongs to, but we still need to keep
 the $\Omega$ argument in order to reason about possible worlds since
-the true world is unknown.  Also, in cases where the domain $\Domain$
-can be decomposed into multiple components, a curried notation will be
-preferred.  So instead of
+the true underlying world is unknown.  Also, in cases where the domain
+$\Domain$ can be decomposed into multiple components, a curried
+notation will be preferred.  So instead of
 $$\mu : (\Domain_1 \times \dots \times \Domain_n) \to \Omega \to \Bool$$
 the following
 $$\mu : \Domain_1 \to \dots \to \Domain_n \to \Omega \to \Bool$$ will
@@ -119,51 +136,37 @@ variables to access $\Omega$:
   observer within that world only has access to a finite record of
   evaluations of $\mu$.  However, that random variable will be
   convenient to define aspects of the semantics of $\nuPLN$.
-\item $\Data : \Omega \to \Bool$, a family of boolean random variables
-  indexed by values in $\Domain$, the predicate inputs.  Unlike
-  $\Model$, $\Data$ is at least partially accessible from an observer
-  within that world.  Meaning, such observer can gather data for a
-  finite subset of $\Domain$.  $\Model$ and $\Data$ are related by the
-  following equality
+\item $\Data : \Omega \to \Bool$, a Boolean random variable indexed by
+  values in $\Domain$.  Unlike $\Model$, $\Data$ is at least partially
+  accessible from an observer within that world.  Meaning, such
+  observer can gather data for a finite subset $\Subdomain$ of
+  $\Domain$.  In that case $\DataS$ represents a finite family of
+  Boolean random variables, corresponding the set of accessible
+  observations.  $\Model$ and $\Data$ are related by the following
+  equality
   $$(\mu\ x\ \omega) = (D_x\ \omega)$$ where $\omega$ runs over all
-  elements of $\Omega$ such that $(M\ \omega) = \mu$.
-  %% Thus,
-  %% equivalently and more formally
-  %% $$\forall \omega \in \Omega, \mu \in \Language, x\in \Domain,
-  %% (M\ \omega) = \mu \Rightarrow (\mu\ x\ \omega) =
-  %% (\Domain_x\ \omega)$$
-  %% In other words, $D$ provides a window into the behavior of $\mu$.
+  elements of $\Omega$ such that $(M\ \omega) = \mu$.  Or simply, in
+  curried fashion
+  $$(\mu\ x) = D_x$$
 \end{itemize}
 Due to the equality above, the distribution of observations is
 entirely determined by a model $\mu$.  In other words, it suffices to
-define a distribution over $\Language$, the prior, to define $\nu$ (as
-far as $M$ and $\Data$ are concerned anyway).  Then, relating
-observations to models can be done using regular Bayesian inference.
-The prior is thus defined by
-$$\nu(M \in L)$$ where $L \in \Event_\Language$.  How to precisely
-define the prior is discussed in~\ref{TODO}, but in general it should
-be viewed as a parameter of $\nuPLN$.  That is, given a certain prior
-of $\nu$ over $\Language$, one can derive a certain version of
-$\nuPLN$.  NEXT: express Bayesian inference on $\nu$.
-
-%% Let us denote the probability space of this prior as
-%% $$(\Language, \Event_\Language, \nu_\Language)$$
-%% \begin{itemize}
-%% \item $\nu_\Language$ is a distribution over $\Language$.
-%% \item $\Event_\Language$ is the event space associated to
-%%   $\nu_\Language$.
-%% \item $\Language$ is the sample space of $\nu_\Language$.
-%% \end{itemize}
-%% If you wonder why I am being so pedantic, carefully defining the
-%% probability space over $\Language$, it is because $\Language$ is not
-%% going to be your average discreet Turing machine language.  For the
-%% purpose of recovering PLN with this Bayesian approach, $\Language$
-%% will have to be continuous.  I will explain in detail why, but before
-%% that let us provide the definition of $\nu$ in terms of its prior
-%% $\nu_\Language$
-
-%% $$NEXT$$
-%% $$\nu : \Event \to [0, 1]$$
+define a distribution over $\Language$, the prior distribution over
+possible models, to define $\nu$ (as far as $M$ and $\Data$ are
+concerned anyway).  Then, relating observations to models can be done
+using regular Bayesian inference.  The prior is defined by
+$$\nu(M \in L)$$ where $L \in \Event_\Language$.  Note how it is
+expressed in terms of elements of $\Event_\Language$, instead of
+elements of $\Language$.  It is because, for the purpose of recovering
+PLN with the Bayesian approach put forward, $\Language$ needs to be
+continuous.  I will explain that aspect in detail, but for now let us
+use this notation to formulate Bayes' theorem
+$$\nu(M \in L | \DataS) = \frac{\nu(M \in L) \times \nu(\DataS | M \in
+  L)}{\nu(\DataS)}$$ where $\Subdomain$ is a finite subset of
+$\Domain$.  An example of prior will be given in~\ref{TODO}, but in
+general it can be viewed as a parameter of $\nuPLN$.  That is, given a
+certain prior of $\nu$ over $\Language$, one can derive a certain
+flavor of $\nuPLN$.
 
 \section{conclusion}
 
