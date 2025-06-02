@@ -1,0 +1,176 @@
+%% Towards a complete formalization of PLN
+%%
+%% Render with: ./render.sh
+
+\documentclass[]{article}
+\usepackage{url}
+\usepackage{minted}
+\usepackage[hyperindex,breaklinks]{hyperref}
+\usepackage{breakurl}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=false,frame=single}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[skip=0pt]{subcaption}
+\usepackage{circledsteps}
+\usepackage{amsfonts}
+
+\begin{document}
+
+\newcommand{\nuPLN}{\nu\textup{PLN}}
+%% \newcommand{\Bool}{\mathbb{B}}
+\newcommand{\Bool}{\textup{Bool}}
+%% \newcommand{\Bool}{B}
+\newcommand{\T}{\top}
+\newcommand{\F}{\bot}
+\newcommand{\Domain}{\mathcal{D}}
+\newcommand{\Subdomain}{\mathcal{S}}
+\newcommand{\Language}{\mathcal{L}}
+\newcommand{\Event}{\mathcal{F}}
+\newcommand{\Model}{M}
+\newcommand{\Data}{D_{x\in\Domain}}
+\newcommand{\DataS}{D_\Subdomain}
+
+\title{Towards a Complete Formalization of PLN\\
+  \texttt{(DRAFT)}} \author{Nil Geisweiller}
+\maketitle
+
+\section{Introduction}
+The goal is similar to Solomonoff Universal Induction~\cite{TODO},
+that is we want to approach a first order (unknown but computable)
+distribution $\mu$ given observations, using a second order
+(uncomputable but known) distribution $\nu$, called the Universal
+Distribution.  In Solomonoff Induction, observations are bit strings
+produced by a Turing machine\footnote{Note that even though the sample
+space of $\nu$ is made of deterministic Turing machines, $\nu$ can
+approximate any computable distribution $\mu$ (thus non-deterministic)
+by maintaining an ensemble of such Turing machines.}.  In PLN however,
+observations are outcomes from an indexed boolean random variable,
+representing the outputs of evaluating a predicate on some inputs.
+Such predicate is called the \emph{observable predicate}.  In practice
+PLN allows multiple observable predicates however one can assume one
+predicate without loss of generality.  Indeed, to emulate multiple
+predicates, one can introduce an extra component in the predicate's
+domain to ``select'' the predicate of interest.  Also, since it is
+observed by a random variable, such predicate is not necessarily
+deterministic (though it could be).  As such, one may think of the
+observable predicate as being a program drawn from a certain
+Probabilistic Programming Language.  In the following section we
+formally define the above.
+
+Because this reformulation of PLN departs somewhat from the definition
+of PLN in the PLN book~\cite{TODO}, we give it a new name, $\nuPLN$.
+
+\section{Definitions}
+
+In its original form, PLN purposely avoids relying on an underlying
+global probability distribution.  I am not against this in principle.
+I will simply admit that I cannot conceive a complete definition of
+PLN that does not rely on such global probability distribution.  I
+would also point out that a publication released after the PLN book by
+the principal authors of the PLN book, Ben Goertzel and Matt Ikle,
+very much aligns with the idea of a global probability
+distribution~\cite{TODO}, and was in fact a great source of
+inspiration for writing this very document.  The next subsection is
+dedicated to define the global probability distribution which $\nuPLN$
+is intended to derive from.
+
+\subsection{Global Probability Distribution Underlying $\nuPLN$}
+Given an observable predicate $\mu$ with domain $\Domain$, let
+$(\Omega, \Event, \nu)$ be a probability space such that
+\begin{itemize}
+\item $\Event$ is the event space, a $\sigma$-algebra on $\Omega$.
+\item $\nu : \Event \to [0, 1]$ is a universal distribution, further
+  defined below.
+\item $\Omega$ is the sample space associated to $\nu$, such that each
+  element $\omega \in \Omega$ contains a model $\mu$\footnote{Those
+  familiar with Solomonoff Universal Induction, please note that here
+  $\mu$ represents a probabilistic predicate rather than a computable
+  probability function calculating the probability of any event,
+  although the latter can be derived from the former.}, a
+  probabilistic predicate over a certain domain $\Domain$, as well as
+  the complete mapping of $\mu$ from $\Domain$ to its Boolean
+  co-domain.
+\end{itemize}
+Since $\mu$ is a probabilistic predicate, its type signature cannot
+merely be
+$$\mu : \Domain \to \Bool$$ where $\Bool = \{\F, \T\}$.  To capture
+its probabilistic nature we give it the following type signature
+$$\mu : \Domain \to \Omega \to \Bool$$ in a curried fashion.  Meaning
+that given its argument, it produces a boolean random variable.
+Therefore the observable predicate can be viewed as an indexed boolean
+random variable.  Of course, $\mu$ never gets to be evaluated on a
+different world than the one it belongs to, but we still need to keep
+the $\Omega$ argument in order to reason about possible worlds since
+the true underlying world is unknown.  Also, in cases where the domain
+$\Domain$ can be decomposed into multiple components, a curried
+notation will be preferred.  So instead of
+$$\mu : (\Domain_1 \times \dots \times \Domain_n) \to \Omega \to \Bool$$
+the following
+$$\mu : \Domain_1 \to \dots \to \Domain_n \to \Omega \to \Bool$$ will
+be used.  This will be convenient to express inheritance relationships
+between partially applied predicates.  Applying $\mu$ to an input $x$
+will be denoted with the following functional programming notation
+$$(\mu\ x)$$ Likewise, $\mu$ applied to more than two arguments will
+be denoted
+$$(\mu\ x\ \omega)$$ and so on.  For $\mu$ such functional programming
+notation is used because it is currying-friendly.  For the rest, we
+keep using the traditional mathematical function application notation,
+such as
+$$\nu(E)$$ denoting the application of the probability distribution
+$\nu$ to the event $E$.  In case $\mu$ is known to be deterministic,
+$\Omega$ could potentially be dropped, but that is not going to be our
+working assumption for now.  With that, let us now define key random
+variables to access $\Omega$:
+\begin{itemize}
+\item $\Model : \Omega \to \Language$ with measurable space
+  $(\Language, \Event_\Language)$, where $\Language$ is a certain
+  probabilistic programming language and $\Event_\Language$ is a
+  $\sigma$-algebra on $\Language$.  Thus, $\Model$ takes a particular
+  world $\omega \in \Omega$ and outputs the probabilistic program $\mu
+  \in \Language$ generating that world.  Note that this random
+  variable is inaccessible from an observer within that world.  An
+  observer within that world only has access to a finite record of
+  evaluations of $\mu$.  However, that random variable will be
+  convenient to define aspects of the semantics of $\nuPLN$.
+\item $\Data : \Omega \to \Bool$, a Boolean random variable indexed by
+  values in $\Domain$.  Unlike $\Model$, $\Data$ is at least partially
+  accessible from an observer within that world.  Meaning, such
+  observer can gather data for a finite subset $\Subdomain$ of
+  $\Domain$.  In that case $\DataS$ represents a finite family of
+  Boolean random variables, corresponding the set of accessible
+  observations.  $\Model$ and $\Data$ are related by the following
+  equality
+  $$(\mu\ x\ \omega) = (D_x\ \omega)$$ where $\omega$ runs over all
+  elements of $\Omega$ such that $(M\ \omega) = \mu$.  Or simply, in
+  curried fashion
+  $$(\mu\ x) = D_x$$
+\end{itemize}
+Due to the equality above, the distribution of observations is
+entirely determined by a model $\mu$.  In other words, it suffices to
+define a distribution over $\Language$, the prior distribution over
+possible models, to define $\nu$ (as far as $M$ and $\Data$ are
+concerned anyway).  Then, relating observations to models can be done
+using regular Bayesian inference.  The prior is defined by
+$$\nu(M \in L)$$ where $L \in \Event_\Language$.  Note how it is
+expressed in terms of elements of $\Event_\Language$, instead of
+elements of $\Language$.  It is because, for the purpose of recovering
+PLN with the Bayesian approach put forward, $\Language$ needs to be
+continuous.  I will explain that aspect in detail, but for now let us
+use this notation to formulate Bayes' theorem
+$$\nu(M \in L | \DataS) = \frac{\nu(M \in L) \times \nu(\DataS | M \in
+  L)}{\nu(\DataS)}$$ where $\Subdomain$ is a finite subset of
+$\Domain$.  An example of prior will be given in~\ref{TODO}, but in
+general it can be viewed as a parameter of $\nuPLN$.  That is, given a
+certain prior of $\nu$ over $\Language$, one can derive a certain
+flavor of $\nuPLN$.
+
+\section{conclusion}
+
+\bibliographystyle{splncs04}
+\bibliography{local}
+
+\end{document}
