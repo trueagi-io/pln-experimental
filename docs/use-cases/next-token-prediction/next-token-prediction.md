@@ -1,14 +1,18 @@
 # PLN Based Next Token Prediction
 
+You are not hallucinating, as the title suggests, this document is
+indeed about doing next token prediction using PLN as a complete, and
+I dare to dream, better substitute for LLMs.
+
 ## Overview
 
-Is next token prediction, what LLMs excel at, doable (in practice) by
-PLN?  This is the question we will explore in this document.  But why
+Is next token prediction doable in practice using PLN?  This is the
+question we will begin to attempt to answer in this document.  But why
 would one want to use PLN to do next token prediction in the first
 place?  I believe there are several advantages:
 
 1. Learning with PLN could be potentially far more sample efficient
-   than transformers.  Thus requiring smaller corpora of text than
+   than transformers.  Thus requiring smaller corpora of texts than
    traditionally used.
 2. Doing next token prediction could be a way to bypass Semantic
    Parsing (turning natural language into logic).  Everything could
@@ -19,20 +23,21 @@ place?  I believe there are several advantages:
    the knowledge directly in logic.
 4. Adding higher level goals would also be more natural, providing a
    more elegant and versatile alternative to finetuning.  Same thing
-   for connecting with other modalities.
+   for connecting other modalities.
 5. With PLN there is no clear separation between training and
    inference.  Everything would happen online.  Whenever a prompt
    would be entered it would simultaneously be part of the short term
    context and the longer term corpus.
-5. No need to limit carrying the thinking phase (for reasoning LLMs
+6. No need to limit carrying the thinking phase (for reasoning LLMs
    like deepseek-r1) in natural language.  PLN could carry the
    thinking at whichever level of abstraction it chooses so.
+7. Reduce hallucination.
 
 But there are also disadvantages:
 
-1. PLN potentially requires far more computational resources than
-   transformers do.
-2. To have any hope of it working at all, would require excellent,
+1. PLN reasoning potentially requires far more computational resources
+   than transformers.
+2. To have any hope of it working at all would require excellent,
    practical, sophisticated attentional allocation and inference
    control mechanisms.  This is both a disadvantage and an advantage
    though, because, in principle, such attentional allocation and
@@ -90,8 +95,7 @@ support categories.  I believe this should not be difficult.  The
 underlying Beta distribution would be replaced by a Dirichlet
 distribution and the various predicate operators, conjunction,
 disjunctions, etc, would be generalized to work with categories.  The
-following old but still relevant [Github
-issue](https://github.com/opencog/atomspace/issues/833) discusses such
+following old but still relevant [Github issue](https://github.com/opencog/atomspace/issues/833) discusses such
 generalization (which can also be viewed as a generalization of
 distributional truth values described in the [PLN Book](http://goertzel.org/PLN_BOOK_6_27_08.pdf)).
 
@@ -143,8 +147,8 @@ where `Nat` is the set of indices of the corpus.  So if the corpus is
 I· ·like· ·math
 ```
 
-where `·` represents a token separator, then the intances making up
-`IthToken` would be
+where `·` is a token separator, then the intances making up `IthToken`
+would be
 
 ```
 (IthToken 0) <{I:1}>
@@ -155,7 +159,7 @@ where `·` represents a token separator, then the intances making up
 ```
 
 where `<{I:1}>` represents a truth value corresponding to the
-Dirichlet distribution obained from setting a count of 1 to token `I`,
+Dirichlet distribution obained by setting a count of 1 to token `I`,
 and zero to everything else.  Doing next token prediction would then
 amount of evaluating the truth value of `IthToken` for a new index.
 
@@ -208,10 +212,10 @@ One could further fill the knowledge with the following:
 ### Learning and Inference
 
 Regardless of what representation is used, `NextToken` or `IthToken`,
-the fun, and the trouble, starts when PLN is let free to discover
-predictive patterns and use them for prediction.  What happens from
-here is where the research begins.  Reasoning may involve a mixture of
-foward chaining, to infere whatever knowledge can be derived from the
+the fun, and the trouble, starts when PLN is free to discover patterns
+and use them for prediction.  What happens from here is where the
+research really begins.  Reasoning may involve a mixture of foward
+chaining, to infere whatever knowledge can be derived from the
 existing knowledge, combined with backward chaining given as query the
 truth value of the next token given a context (thus representing a
 Dirichlet distribution over `Token`).  The next token would then be
