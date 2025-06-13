@@ -18,6 +18,10 @@
 \usepackage{circledsteps}
 \usepackage{amsfonts}
 
+% For ≞ (requires the LuaLaTeX engine)
+\usepackage{unicode-math}
+\setmathfont{Stix Two Math}
+
 \begin{document}
 
 \newcommand{\nuPLN}{\nu\textup{PLN}}
@@ -32,7 +36,8 @@
 \newcommand{\Event}{\mathcal{F}}
 \newcommand{\Model}{M}
 \newcommand{\Data}{D_{x\in\Domain}}
-\newcommand{\DataS}{D_\Subdomain}
+\newcommand{\DataS}{D_{\Subdomain}}
+\newcommand{\STV}[2]{<\!#1, #2\!>}
 
 \title{Towards a Complete Formalization of PLN\\
   \texttt{(DRAFT)}} \author{Nil Geisweiller}
@@ -65,7 +70,6 @@ Because this reformulation of PLN departs somewhat from the definition
 of PLN in the PLN book~\cite{TODO}, we give it a new name, $\nuPLN$.
 
 \section{Definitions}
-
 In its original form, PLN purposely avoids relying on an underlying
 global probability distribution.  I am not against this in principle.
 I will simply admit that I cannot conceive a complete definition of
@@ -78,7 +82,8 @@ inspiration for writing this very document.  The next subsection is
 dedicated to define the global probability distribution which $\nuPLN$
 is intended to derive from.
 
-\subsection{Global Probability Distribution Underlying $\nuPLN$}
+\subsection{Global Probability Distribution}
+\label{subsec:globalprob}
 Given an observable predicate $\mu$ with domain $\Domain$, let
 $(\Omega, \Event, \nu)$ be a probability space such that
 \begin{itemize}
@@ -127,8 +132,8 @@ working assumption for now.  With that, let us now define key random
 variables to access $\Omega$:
 \begin{itemize}
 \item $\Model : \Omega \to \Language$ with measurable space
-  $(\Language, \Event_\Language)$, where $\Language$ is a certain
-  probabilistic programming language and $\Event_\Language$ is a
+  $(\Language, \Event_{\Language})$, where $\Language$ is a certain
+  probabilistic programming language and $\Event_{\Language}$ is a
   $\sigma$-algebra on $\Language$.  Thus, $\Model$ takes a particular
   world $\omega \in \Omega$ and outputs the probabilistic program $\mu
   \in \Language$ generating that world.  Note that this random
@@ -155,8 +160,8 @@ define a distribution over $\Language$, the prior distribution over
 possible models, to define $\nu$ (as far as $M$ and $\Data$ are
 concerned anyway).  Then, relating observations to models can be done
 using regular Bayesian inference.  The prior is defined by
-$$\nu(M \in L)$$ where $L \in \Event_\Language$.  Note how it is
-expressed in terms of elements of $\Event_\Language$, instead of
+$$\nu(M \in L)$$ where $L \in \Event_{\Language}$.  Note how it is
+expressed in terms of elements of $\Event_{\Language}$, instead of
 elements of $\Language$.  It is because, for the purpose of recovering
 PLN with the Bayesian approach put forward, $\Language$ needs to be
 continuous.  I will explain that aspect in detail, but for now let us
@@ -167,6 +172,96 @@ $\Domain$.  An example of prior will be given in~\ref{TODO}, but in
 general it can be viewed as a parameter of $\nuPLN$.  That is, given a
 certain prior of $\nu$ over $\Language$, one can derive a certain
 flavor of $\nuPLN$.
+
+\section{Concepts vs Predicates}
+The PLN book describes respectively the notions of \emph{concepts} and
+\emph{predicates}, and their respective associated relationships
+\emph{inheritance} and \emph{implication}.  There is a perfect
+isomorphism between concepts and inheritance on one side and
+predicates and implication on the other side.  Concerned with
+conciseness, we will pick a side, the predicate side, and essentially
+forget about the other side, the concept side, for the rest of this
+document.  But before we do so let us recall what is a concept, the
+inheritance between two concepts, and the isomorphism between concepts
+and predicates.
+
+\subsection{Concepts and Inheritance}
+A concept is a fuzzy (or, as I prefer to say, probabilistic, for
+reasons I will explain in Section~\ref{TODO}) set, and the
+\emph{extensional} inheritance between two concepts is a
+probabilitized subset relationship.  Originally, in the PLN book, the
+inheritance relationship is defined as an explicit mixture of
+extensional and intensional inheritances. We will show however that
+they are in fact both the same thing, the extensional inheritance is a
+way to approach inheritance solely via \emph{induction}, and
+intensional inheritance is a way to approach inheritance solely via
+\emph{abduction}.  Any one side, extensional or intensional, is good
+enough to define the other, so let us pick one, the extensional side,
+and define inheritance with it.  The extensional inheritance between
+two concepts can be viewed as a probabilitized subset relationship.
+It allows to express things like ``most members of a set are also
+members of another set''.  For instance one could express in PLN that
+90\% of birds fly, with
+$$(\texttt{Inheritance}\ \texttt{Bird}\ \texttt{Fly}) \measeq 0.9$$
+Such knowledge might have been obtained by observing a finite sample
+of birds and whether or not they fly.  Meaning there could be an
+uncertainty on the 90\% itself.  To represent such uncertainty PLN
+uses a second order distribution, in this case a Beta distribution as
+it is an ideal choice to represent the posterior of the parameter of a
+Bernouilli distribution given observations.  Under this assumption
+only two numbers are required to determine the parameters, $\alpha$
+and $\beta$, of the associated Beta distribution.  A \emph{truth
+value} called \emph{simple truth value} was created for this purpose
+and is thus described by two numbers: a strength (a proxy for a
+probability estimate) and a confidence over this strength from which
+the $\alpha$ and $\beta$ parameters of the Beta distribution can be
+recovered.  For instance, given a simple truth value one may express
+that 90\% of birds fly with a confidence of 0.99
+$$(\texttt{Inheritance}\ \texttt{Bird}\ \texttt{Fly})\ \measeq\ \STV{0.9}{0.99}$$
+where 0.9 is the strength and 0.99 is the confidence.  The confidence
+is a value between 0 and 1 that actually encodes the sample size that
+was used to obtained the strength.  The higher the sample size, the
+higher the confidence.  More information about that will be provided
+in Section~\ref{TODO} but for now let us just leave it at that as it
+is enough for what we are concerned with in this Section which is the
+isomorphism between concepts and predicates.
+
+\subsection{Isomorphism between Concepts and Predicates}
+To every concept one can associate a predicate and vice versa.  To go
+from concept to predicate one can use the \emph{indicator function},
+and to go from predicate to concept one can use the \emph{satisfying
+set}.  These notions are well known for crisp predicates and sets and
+thus will not be detailed any further here.  The only difference in
+PLN is that concepts are probabilistic, meaning that a probability (or
+potentially a second order probability) can be attached to the
+membership of an element to a concept.  Likewise, predicates are
+probabilistic in the sense that a (second order) probability can be
+attached to the evaluation of an argument to a predicate.  As one
+would expect the isomorphism also applies between the inheritance
+relationship on the concept side and the implication relationship on
+the predicate side.  So for instance, on the predicate side one can
+express the same inheritance relationship between birds and fly as
+follows
+$$(\texttt{Implication}\ \texttt{IsBird}\ \texttt{DoesFly})\ \measeq\ \STV{0.9}{0.99}$$
+where $\texttt{IsBird}$ and $\texttt{DoesFly}$ have been obtained by
+taking the indicator functions of $\texttt{Bird}$ and $\texttt{Fly}$.
+As mentioned earlier, we will drop the concept side and only focus on
+the predicate side for the remaining of the document.  If the reader
+still wishes to understand more clearly this isomorphism the PLN book
+covers it well.
+
+\section{Deriving PLN Rules}
+Our goal here is to derive every PLN rules in the PLN book from the
+global distribution that has been defined in
+Section~\ref{subsec:globalprob}.  By doing so we hope not only to
+provide a clear unambiguous definition for each rule, but also an
+ideal to approach as using a global distribution should give us the
+means to derive a convergence theorem a la Solomonoff.
+
+\subsection{Implication Direct Introduction}
+This rule is not explicitly stated as such in the PLN book but it can
+be derived from iteratively applying induction and revision, and
+directly reflects the formula of extensional inheritance/implication
 
 \section{conclusion}
 
