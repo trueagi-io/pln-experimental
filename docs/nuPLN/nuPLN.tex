@@ -83,7 +83,7 @@ dedicated to define the global probability distribution which $\nuPLN$
 is intended to derive from.
 
 \subsection{Global Probability Distribution}
-\label{subsec:globalprob}
+\label{sec:globalprob}
 Given an observable predicate $\mu$ with domain $\Domain$, let
 $(\Omega, \Event, \nu)$ be a probability space such that
 \begin{itemize}
@@ -173,11 +173,18 @@ general it can be viewed as a parameter of $\nuPLN$.  That is, given a
 certain prior of $\nu$ over $\Language$, one can derive a certain
 flavor of $\nuPLN$.
 
-\section{Concepts vs Predicates}
+\section{Important Notions of PLN}
+In Section~\ref{sec:derules} will proceed to derive PLN rules from the
+global probability distribution introduced in
+Section~\ref{sec:globalprob}, but for now let us recall important
+notions of PLN.
+
+\subsection{Concepts vs Predicates}
 The PLN book describes respectively the notions of \emph{concepts} and
 \emph{predicates}, and their respective associated relationships
-\emph{inheritance} and \emph{implication}.  There is a perfect
-isomorphism between concepts and inheritance on one side and
+\emph{inheritance} and \emph{implication}.  As explain in Section 2.6
+\emph{Higher-Order Logical Relationships} of the PLN book, there is a
+perfect isomorphism between concepts and inheritance on one side and
 predicates and implication on the other side.  Concerned with
 conciseness, we will pick a side, the predicate side, and essentially
 forget about the other side, the concept side, for the rest of this
@@ -185,7 +192,7 @@ document.  But before we do so let us recall what is a concept, the
 inheritance between two concepts, and the isomorphism between concepts
 and predicates.
 
-\subsection{Concepts and Inheritance}
+\subsubsection{Concepts and Inheritance}
 A concept is a fuzzy (or, as I prefer to say, probabilistic, for
 reasons I will explain in Section~\ref{TODO}) set, and the
 \emph{extensional} inheritance between two concepts is a
@@ -226,7 +233,7 @@ in Section~\ref{TODO} but for now let us just leave it at that as it
 is enough for what we are concerned with in this Section which is the
 isomorphism between concepts and predicates.
 
-\subsection{Isomorphism between Concepts and Predicates}
+\subsubsection{Isomorphism between Concepts and Predicates}
 To every concept one can associate a predicate and vice versa.  To go
 from concept to predicate one can use the \emph{indicator function},
 and to go from predicate to concept one can use the \emph{satisfying
@@ -246,14 +253,16 @@ $$(\texttt{Implication}\ \texttt{IsBird}\ \texttt{DoesFly})\ \measeq\ \STV{0.9}{
 where $\texttt{IsBird}$ and $\texttt{DoesFly}$ have been obtained by
 taking the indicator functions of $\texttt{Bird}$ and $\texttt{Fly}$.
 As mentioned earlier, we will drop the concept side and only focus on
-the predicate side for the remaining of the document.  If the reader
-still wishes to understand more clearly this isomorphism the PLN book
-covers it well.
+the predicate side for the remaining of the document.
+
+\subsection{Truth Value as Second Order Distribution}
+\label{sec:truthvalue}
 
 \section{Deriving PLN Rules}
+\label{sec:derules}
 Our goal here is to derive every PLN rules in the PLN book from the
 global distribution that has been defined in
-Section~\ref{subsec:globalprob}.  By doing so we hope not only to
+Section~\ref{sec:globalprob}.  By doing so we hope not only to
 provide a clear unambiguous definition for each rule, but also an
 ideal to approach as using a global distribution should give us the
 means to derive a convergence theorem a la Solomonoff.
@@ -261,7 +270,9 @@ means to derive a convergence theorem a la Solomonoff.
 \subsection{Implication Direct Introduction}
 This rule is not explicitly stated as such in the PLN book but it can
 be derived from iteratively applying induction and revision, and
-directly reflects the formula of extensional inheritance/implication
+reflects the formula of extensional inheritance/implication given in
+Section 2.4.1 \emph{The Semantics of Inheritance} of the PLN book, at
+least the strength part.
 
 \section{conclusion}
 
