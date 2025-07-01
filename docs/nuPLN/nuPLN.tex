@@ -38,6 +38,7 @@
 \newcommand{\Data}{D_{x\in\Domain}}
 \newcommand{\DataS}{D_{\Subdomain}}
 \newcommand{\STV}[2]{<\!#1, #2\!>}
+\newcommand{\limp}{\Rightarrow}
 
 \title{Towards a Complete Formalization of PLN\\
   \texttt{(DRAFT)}} \author{Nil Geisweiller}
@@ -258,6 +259,14 @@ the predicate side for the remaining of the document.
 \subsection{Truth Value as Second Order Distribution}
 \label{sec:truthvalue}
 
+\subsection{Statement versus Judgement}
+\label{sec:statjudge}
+Like in NAL, a PLN \emph{statement} designates a logical statement
+without truth value, such as
+$$P \limp Q$$ While a PLN \emph{judgment} designates a PLN statement
+with a truth value attached to it, such as
+$$P \limp Q\ \measeq\ \STV{0.9}{0.8}$$
+
 \section{Deriving PLN Rules}
 \label{sec:derules}
 Our goal here is to derive every PLN rules in the PLN book from the
@@ -268,11 +277,20 @@ ideal to approach as using a global distribution should give us the
 means to derive a convergence theorem a la Solomonoff.
 
 \subsection{Implication Direct Introduction}
-This rule is not explicitly stated as such in the PLN book but it can
-be derived from iteratively applying induction and revision, and
-reflects the formula of extensional inheritance/implication given in
-Section 2.4.1 \emph{The Semantics of Inheritance} of the PLN book, at
-least the strength part.
+This rule is not explicitly stated as such in the PLN book but can be
+derived from iteratively applying induction and revision, and reflects
+the formula of extensional inheritance/implication given in Section
+2.4.1 \emph{The Semantics of Inheritance} of the PLN book, at least
+the strength part.  To obtain the confidence part we assume that the
+second order distribution is a Beta distribution, like in the Section
+4.2 \emph{From Imprecise Probabilities to Indefinite Probabilities} of
+the PLN book.  In order to derive a Beta distribution as second order
+distribution we can assume an underlying Bernouilli process with
+parameter $p$ with a Beta distribution as prior.  The Jeffreys prior
+where $\alpha=\beta=\frac{1}{2}$ is often the default choice.  Given
+the PLN statement
+$$P \limp Q$$ Let us express its truth value as the posterior
+probability of the parameter $p$ of the underlying Bernouilli process.
 
 \section{conclusion}
 
