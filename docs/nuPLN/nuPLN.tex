@@ -17,6 +17,7 @@
 \usepackage[skip=0pt]{subcaption}
 \usepackage{circledsteps}
 \usepackage{amsfonts}
+\usepackage{amsmath}
 
 % For ≞ (requires the LuaLaTeX engine)
 \usepackage{unicode-math}
@@ -31,12 +32,13 @@
 \newcommand{\T}{\top}
 \newcommand{\F}{\bot}
 \newcommand{\Domain}{\mathcal{D}}
-\newcommand{\Subdomain}{\mathcal{S}}
+\newcommand{\Subsetdom}{\mathcal{S}}
+\newcommand{\Predicate}{\mathcal{P}}
 \newcommand{\Language}{\mathcal{L}}
 \newcommand{\Event}{\mathcal{F}}
 \newcommand{\Model}{M}
 \newcommand{\Data}{D_{x\in\Domain}}
-\newcommand{\DataS}{D_{\Subdomain}}
+\newcommand{\DataS}{D_{\Subsetdom}}
 \newcommand{\STV}[2]{<\!#1, #2\!>}
 \newcommand{\limp}{\Rightarrow}
 
@@ -120,17 +122,24 @@ $$\mu : \Domain_1 \to \dots \to \Domain_n \to \Omega \to \Bool$$ will
 be used.  This will be convenient to express inheritance relationships
 between partially applied predicates.  Applying $\mu$ to an input $x$
 will be denoted with the following functional programming notation
-$$(\mu\ x)$$ Likewise, $\mu$ applied to more than two arguments will
-be denoted
-$$(\mu\ x\ \omega)$$ and so on.  For $\mu$ such functional programming
-notation is used because it is currying-friendly.  For the rest, we
-keep using the traditional mathematical function application notation,
-such as
+$$(\mu\ x)$$ Thus if the domain is decomposed into subdomains
+$\Domain_1$ to $\Domain_n$, applying $\mu$ to all its inputs $x_1$ to
+$x_n$ will be denoted
+$$(\mu\ x_1\ \dots\ x_n)$$ Likewise for the $\omega$ argument
+$$(\mu\ x_1\ \dots\ x_n\ \omega)$$ For $\mu$ such functional
+programming notation is used because it is currying-friendly.  For the
+rest, we keep using the traditional mathematical function application
+notation, such as
 $$\nu(E)$$ denoting the application of the probability distribution
 $\nu$ to the event $E$.  In case $\mu$ is known to be deterministic,
 $\Omega$ could potentially be dropped, but that is not going to be our
-working assumption for now.  With that, let us now define key random
-variables to access $\Omega$:
+working assumption for now.  Additionally to the functional
+programming style, we may use parametric notation, so for instance
+instead of
+$$(\mu\ x_1\ x_2)$$ we may write
+$$(\mu_{x_1}\ x_2)$$ where $x_1$ is viewed as a parameter and $x_2$ is
+viewed as the argument of $\mu_{x_1}$.  With that, let us now define
+key random variables to access $\Omega$:
 \begin{itemize}
 \item $\Model : \Omega \to \Language$ with measurable space
   $(\Language, \Event_{\Language})$, where $\Language$ is a certain
@@ -140,12 +149,12 @@ variables to access $\Omega$:
   \in \Language$ generating that world.  Note that this random
   variable is inaccessible from an observer within that world.  An
   observer within that world only has access to a finite record of
-  evaluations of $\mu$.  However, that random variable will be
-  convenient to define aspects of the semantics of $\nuPLN$.
+  evaluations of $\mu$.  However, this random variable is important to
+  have to define aspects of the semantics of $\nuPLN$.
 \item $\Data : \Omega \to \Bool$, a Boolean random variable indexed by
   values in $\Domain$.  Unlike $\Model$, $\Data$ is at least partially
   accessible from an observer within that world.  Meaning, such
-  observer can gather data for a finite subset $\Subdomain$ of
+  observer can gather data for a finite subset $\Subsetdom$ of
   $\Domain$.  In that case $\DataS$ represents a finite family of
   Boolean random variables, corresponding the set of accessible
   observations.  $\Model$ and $\Data$ are related by the following
@@ -168,17 +177,18 @@ PLN with the Bayesian approach put forward, $\Language$ needs to be
 continuous.  I will explain that aspect in detail, but for now let us
 use this notation to formulate Bayes' theorem
 $$\nu(M \in L | \DataS) = \frac{\nu(M \in L) \times \nu(\DataS | M \in
-  L)}{\nu(\DataS)}$$ where $\Subdomain$ is a finite subset of
+  L)}{\nu(\DataS)}$$ where $\Subsetdom$ is a finite subset of
 $\Domain$.  An example of prior will be given in~\ref{TODO}, but in
 general it can be viewed as a parameter of $\nuPLN$.  That is, given a
 certain prior of $\nu$ over $\Language$, one can derive a certain
 flavor of $\nuPLN$.
 
-\section{Important Notions of PLN}
+\section{PLN and the Global Distribution}
 In Section~\ref{sec:derules} will proceed to derive PLN rules from the
 global probability distribution introduced in
 Section~\ref{sec:globalprob}, but for now let us recall important
-notions of PLN.
+notions of PLN and how to relate them to the global distribution
+defined in Section~\ref{sec:globalprob}.
 
 \subsection{Concepts vs Predicates}
 The PLN book describes respectively the notions of \emph{concepts} and
@@ -256,7 +266,26 @@ taking the indicator functions of $\texttt{Bird}$ and $\texttt{Fly}$.
 As mentioned earlier, we will drop the concept side and only focus on
 the predicate side for the remaining of the document.
 
-\subsection{Truth Value as Second Order Distribution}
+\subsection{Relating Predicates to \texorpdfstring{$\mu$}{𝜇}}
+As explained in Section~\ref{sec:globalprob} there is only one global
+predicate, $\mu$.  To manipulate multiple predicates we can simply
+introduce a additional parameter in the domain of $\mu$ indicating
+predicates.  Let us call this subdomain $\Predicate$ which ranges over
+symbols representing predicates, in this case $\mu$ may have the type
+signature
+$$\mu : \Predicate \to \Domain \to \Omega \to \Bool$$ So for instance
+to express that a cat is a mammal, traditionally represented as
+$$\textit{Cat} \limp \textit{Mammal}$$ one may use the following
+parametric notation of $\mu$
+$$\mu_{\textit{Cat}} \limp \mu_{\textit{Mammal}}$$ Likewise, to
+represent the evaluation of the predicate \textit{Cat} over a certain
+cat instance, $\textit{cat}_{123}$, one may use
+$$(\mu_{\textit{Cat}}\ \textit{cat}_{123})$$ corresponding to
+the traditional representation
+$$(\textit{Cat}\ \textit{cat}_{123})$$ where $\textit{cat}_{123} \in
+\Domain$.
+
+\subsection{Truth Value as Posterior Distribution}
 \label{sec:truthvalue}
 
 \subsection{Statement versus Judgement}
@@ -291,6 +320,10 @@ where $\alpha=\beta=\frac{1}{2}$ is often the default choice.  Given
 the PLN statement
 $$P \limp Q$$ Let us express its truth value as the posterior
 probability of the parameter $p$ of the underlying Bernouilli process.
+In order to map a Bernouilli process onto an implication we zoom-in to
+the data points where $P$ is true.
+
+NEXT
 
 \section{conclusion}
 
