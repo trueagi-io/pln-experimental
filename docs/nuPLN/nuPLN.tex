@@ -29,13 +29,15 @@
 %% \newcommand{\Bool}{\mathbb{B}}
 \newcommand{\Bool}{\textup{Bool}}
 %% \newcommand{\Bool}{B}
-\newcommand{\T}{\top}
-\newcommand{\F}{\bot}
+\newcommand{\T}{\texttt{True}}
+\newcommand{\F}{\texttt{False}}
 \newcommand{\Domain}{\mathcal{D}}
 \newcommand{\Subsetdom}{\mathcal{S}}
 \newcommand{\Predicate}{\mathcal{P}}
 \newcommand{\Language}{\mathcal{L}}
-\newcommand{\Event}{\mathcal{F}}
+\newcommand{\Bernouilli}{\mathcal{B}}
+\newcommand{\Bernouillip}{\mathcal{B}_p}
+\newcommand{\Field}{\mathcal{F}}
 \newcommand{\Model}{M}
 \newcommand{\Datax}{D_x}
 \newcommand{\DataxD}{D_{x\in\Domain}}
@@ -91,10 +93,10 @@ is intended to derive from.
 
 \subsection{Global Probability Distribution}
 \label{sec:globalprob}
-Let $(\Omega, \Event, \nu)$ be a probability space such that
+Let $(\Omega, \Field, \nu)$ be a probability space such that
 \begin{itemize}
-\item $\Event$ is the event space, a $\sigma$-algebra on $\Omega$.
-\item $\nu : \Event \to [0, 1]$ is a universal distribution, further
+\item $\Field$ is the event space, a $\sigma$-algebra on $\Omega$.
+\item $\nu : \Field \to [0, 1]$ is a universal distribution, further
   defined below.
 \item $\Omega$, the set of possible worlds, is the sample space
   associated to $\nu$, such that each element $\anyomega \in \Omega$
@@ -166,8 +168,8 @@ viewed as the argument of $\mu_{x_1}$.\\
 With that, let us now define key random variables to access $\Omega$:
 \begin{itemize}
 \item $\Model : \Omega \to \Language$ with measurable space
-  $(\Language, \Event_{\Language})$, where $\Language$ is a certain
-  probabilistic programming language and $\Event_{\Language}$ is a
+  $(\Language, \Field_{\Language})$, where $\Language$ is a certain
+  probabilistic programming language and $\Field_{\Language}$ is a
   $\sigma$-algebra on $\Language$.  Thus, $\Model$ takes a world
   $\anyomega \in \Omega$ and outputs the probabilistic program $\anymu
   \in \Language$ generating that world.  Note that this random
@@ -195,21 +197,26 @@ to define a distribution over $\Language$, the prior distribution over
 possible models, to define $\nu$ (as far as $M$ and $\Datax$ are
 concerned anyway).  Then, relating observations to models can be done
 using regular Bayesian inference.  The prior is defined by
-$$\nu(M \in L)$$ where $L \in \Event_{\Language}$.  Note how it is
-expressed in terms of elements of $\Event_{\Language}$, instead of
+$$\nu(M \in L)$$ where $L \in \Field_{\Language}$.  Note how it is
+expressed in terms of elements of $\Field_{\Language}$, instead of
 elements of $\Language$.  It is because, for the purpose of recovering
 PLN with the Bayesian approach, $\Language$ needs to be continuous.  I
 will explain this in detail, but for now let us use this notation to
 formulate Bayes' theorem
 $$\nu(M \in L | \DataS) = \frac{\nu(M \in L) \times \nu(\DataS | M \in
   L)}{\nu(\DataS)}$$ where $\Subsetdom$ is a finite subset of
-$\Domain$.  An example of prior will be given in~\ref{TODO}, but in
-general it can be viewed as a parameter of $\nuPLN$.  That is, given a
-certain prior of $\nu$ over $\Language$, one can derive a certain
-flavor of $\nuPLN$.  Since $(\mu\ x) = \Datax$, a history data point
-will be represented as $(\mu\ x) = \T$ or $(\mu\ x) = \F$, and the
-usage of the random variable $\Datax$, and especially $\DataS$, will
-be reserved in the formulation of $\nu$ to refer to the observed
+$\Domain$.  For the sake of simplicity, we may drop $M$ since it is
+the only random variable that ranges over $\Language$, and simply
+write
+$$\nu(L | \DataS) = \frac{\nu(L) \times \nu(\DataS |
+  L)}{\nu(\DataS)}$$
+An example of prior will be given in~\ref{TODO},
+but in general it can be viewed as a parameter of $\nuPLN$.  That is,
+given a certain prior of $\nu$ over $\Language$, one can derive a
+certain flavor of $\nuPLN$.  Since $(\mu\ x) = \Datax$, a history data
+point will be represented as $(\mu\ x) = \T$ or $(\mu\ x) = \F$, and
+the usage of the random variable $\Datax$, and especially $\DataS$,
+will be reserved in the formulation of $\nu$ to refer to the observed
 history.
 
 \subsection{PLN Global Distribution vs Solomonoff Induction}
@@ -361,10 +368,26 @@ To derive the predicate direct introduction rule we consider the
 posterior probability of a Bernouilli process with parameter $p$ given
 all available observations of the predicate in question.  Let us begin
 with $\mu$ itself.  In order to formulate this posterior we need to
-assume that $\Language$ has a Bernouilli sampler in its vocabulary of
-operators.  NEXT  The posterior is formulated using Bayes' theorem
-$$\nu(M \in L | \DataS) = \frac{\nu(M \in L) \times \nu(\DataS | M \in
-  L)}{\nu(\DataS)}$$
+assume that $\Language$ has a Bernouilli sampler in its set of
+operators.  Let $\Bernouilli$ be the subset of programs of $\Language$
+consisting of a single Bernouilli call, thus comprised of the
+following programs
+\begin{minted}{scheme}
+  (Bernouilli p)
+\end{minted}
+where \mintinline{scheme}{p} is the parameter of the Bernouilli
+distribution ranging over $[0, 1]$.  Such probabilistic program, when
+executed, outputs $\T$ with a probability of \mintinline{scheme}{p} or
+$\F$ with a probability of 1 - \mintinline{scheme}{p}.  Let
+$\Field_{\Bernouilli}$ be a Borel $\sigma$-algebra on $\Bernouilli$.
+Let us assume that $\Field_{\Bernouilli}$ is a subfield of
+$\Field_{\Language}$.  We claim that that if $\mu$ is restricted to
+the programs in $\Bernouilli$ then the posterior of
+\mintinline{scheme}{p} corresponds to the truth value of $\mu$,
+expressed as follows
+$$\nu(L_{\Bernouilli} | \DataS) = \frac{\nu(L_{\Bernouilli}) \times
+  \nu(\DataS | L_{\Bernouilli})}{\nu(\DataS)}$$ where $L_{\Bernouilli}
+\in \Field_{\Bernouilli}$.  NEXT
 
 \subsection{Implication Direct Introduction}
 \label{sec:impldirect}
