@@ -37,7 +37,8 @@
 \newcommand{\Language}{\mathcal{L}}
 \newcommand{\Event}{\mathcal{F}}
 \newcommand{\Model}{M}
-\newcommand{\Data}{D_{x\in\Domain}}
+\newcommand{\Datax}{D_x}
+\newcommand{\DataxD}{D_{x\in\Domain}}
 \newcommand{\DataS}{D_{\Subsetdom}}
 \newcommand{\STV}[2]{<\!#1, #2\!>}
 \newcommand{\limp}{\Rightarrow}
@@ -175,23 +176,23 @@ With that, let us now define key random variables to access $\Omega$:
   evaluations of $\anymu$.  However, this random variable is important
   to reason about multiple worlds, we suspect it is particularly
   important for higher order reasoning.
-\item $\Data : \Omega \to \Bool$, a Boolean random variable indexed by
-  values in $\Domain$.  Unlike $\Model$, $\Data$ is at least partially
-  accessible from an observer within that world.  Meaning, such
-  observer can gather data for a finite subset $\Subsetdom$ of
+\item $\DataxD : \Omega \to \Bool$, a Boolean random variable indexed
+  by values in $\Domain$.  Unlike $\Model$, $\DataxD$ is at least
+  partially accessible from an observer within that world.  Meaning,
+  such observer can gather data for a finite subset $\Subsetdom$ of
   $\Domain$.  In this case $\DataS$ represents a finite family of
   Boolean random variables, corresponding the set of accessible
-  observations.  $\Model$ and $\Data$ are related by the following
+  observations.  $\Model$ and $\DataxD$ are related by the following
   equality
-  $$(\anymu\ x\ \anyomega) = (D_x\ \anyomega)$$ where $\anyomega \in
-  \Omega$ such that $(M\ \anyomega) = \anymu$.  Or simply, in curried
-  fashion
-  $$(\anymu\ x) = D_x$$
+  $$(\anymu\ x\ \anyomega) = (\Datax\ \anyomega)$$ where $\anyomega
+  \in \Omega$ such that $(M\ \anyomega) = \anymu$.  Or simply, in
+  curried fashion
+  $$(\anymu\ x) = \Datax$$
 \end{itemize}
 Due to the equality above, the distribution of observations is
 entirely determined by a model $\anymu$.  In other words, it suffices
 to define a distribution over $\Language$, the prior distribution over
-possible models, to define $\nu$ (as far as $M$ and $\Data$ are
+possible models, to define $\nu$ (as far as $M$ and $\Datax$ are
 concerned anyway).  Then, relating observations to models can be done
 using regular Bayesian inference.  The prior is defined by
 $$\nu(M \in L)$$ where $L \in \Event_{\Language}$.  Note how it is
@@ -205,11 +206,11 @@ $$\nu(M \in L | \DataS) = \frac{\nu(M \in L) \times \nu(\DataS | M \in
 $\Domain$.  An example of prior will be given in~\ref{TODO}, but in
 general it can be viewed as a parameter of $\nuPLN$.  That is, given a
 certain prior of $\nu$ over $\Language$, one can derive a certain
-flavor of $\nuPLN$.  Since $(\mu\ x) = D_x$, the accessible history
-will be represented as $(\mu\ x) = \T$ (resp. $(\mu\ x) = \F$), when
-$\nu$ is recorded as being evaluated to true (resp. false) over $x$,
-and the usage of the random variable $D_x$ will tend to be forgotten
-except when NEXT.
+flavor of $\nuPLN$.  Since $(\mu\ x) = \Datax$, a history data point
+will be represented as $(\mu\ x) = \T$ or $(\mu\ x) = \F$, and the
+usage of the random variable $\Datax$, and especially $\DataS$, will
+be reserved in the formulation of $\nu$ to refer to the observed
+history.
 
 \subsection{PLN Global Distribution vs Solomonoff Induction}
 Note that unlike with Solomonoff Universal Induction, $\anymu$
@@ -355,6 +356,15 @@ presented in Section~\ref{sec:impldirect} where the implicant is the
 described here as its own rule to simplify the presentation.  Indeed,
 it should be easier to understand the Implication Direct Introduction
 rule after understanding the Predicate Direct Introduction rule.
+
+To derive the predicate direct introduction rule we consider the
+posterior probability of a Bernouilli process with parameter $p$ given
+all available observations of the predicate in question.  Let us begin
+with $\mu$ itself.  In order to formulate this posterior we need to
+assume that $\Language$ has a Bernouilli sampler in its vocabulary of
+operators.  NEXT  The posterior is formulated using Bayes' theorem
+$$\nu(M \in L | \DataS) = \frac{\nu(M \in L) \times \nu(\DataS | M \in
+  L)}{\nu(\DataS)}$$
 
 \subsection{Implication Direct Introduction}
 \label{sec:impldirect}
