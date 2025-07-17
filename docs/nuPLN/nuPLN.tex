@@ -355,24 +355,24 @@ means to derive a convergence theorem a la Solomonoff.
 
 \subsection{Predicate Direct Introduction}
 This rule is meant to calculate the truth value attached to a
-predicate from direct observations.  Its truth value can be understood
-as the marginal probability of a predicate to be true, irrespective of
-the inputs.  It can be viewed as a subcase of the Implication Direct
-Introduction presented in Section~\ref{sec:impldirect} where the
-implicant is the \emph{Universal Predicate} (a predicate that is
-always true), but is described here as its own rule to simplify the
-presentation.  Indeed, it should be easier to understand the
-Implication Direct Introduction rule after understanding the Predicate
-Direct Introduction rule.
+predicate using direct observations.  Its truth value can be
+understood as the marginal probability of a predicate to be true,
+irrespective of the inputs.  It can be viewed as a subcase of the
+Implication Direct Introduction presented in
+Section~\ref{sec:impldirect} where the implicant is the
+\emph{Universal Predicate} (a predicate that is always true), but is
+described here as its own rule to simplify the presentation.  Indeed,
+it should be easier to understand the Implication Direct Introduction
+rule after understanding the Predicate Direct Introduction rule.
 
 To derive the predicate direct introduction rule we consider the
 posterior probability of a Bernouilli process with parameter $p$ given
 all available observations of the predicate in question.  Let us begin
-with $\mu$ itself.  In order to formulate this posterior we need to
-assume that $\Language$ has a Bernouilli sampler in its set of
-operators.  Let $\Bernouilli$ be the subset of programs of $\Language$
-consisting of a single Bernouilli call, thus comprised of the
-following programs
+with $\mu$ itself, the overarching predicate.  In order to formulate
+this posterior we need to assume that $\Language$ has a Bernouilli
+sampler in its set of operations.  Let $\Bernouilli$ be the subset of
+programs of $\Language$ consisting of a single Bernouilli call, thus
+$\Bernouilli$ is comprised of the following programs
 \begin{minted}{scheme}
   (Bernouilli p)
 \end{minted}
@@ -386,9 +386,19 @@ $\Field_{\Language}$.  We claim that that if $\mu$ is restricted to
 the programs in $\Bernouilli$ then the posterior of
 \mintinline{scheme}{p} corresponds to the truth value of $\mu$,
 expressed as follows
-$$\nu(L_{\Bernouilli} | \DataS) = \frac{\nu(L_{\Bernouilli}) \times
-  \nu(\DataS | L_{\Bernouilli})}{\nu(\DataS)}$$ where $L_{\Bernouilli}
-\in \Field_{\Bernouilli}$.  NEXT
+\begin{eqnarray}
+  \nu(M \in L_{\Bernouilli} | M \in \Bernouilli, \DataS) & = &
+  \frac{\nu(M \in L_{\Bernouilli}, M \in \Bernouilli, \DataS)}{\nu(M
+    \in \Bernouilli, \DataS)}\\
+  & = & \frac{\nu(\DataS | M \in L_{\Bernouilli}, M \in \Bernouilli)
+  \times \nu(M \in L_{\Bernouilli}, M \in \Bernouilli)} {\nu(M \in
+    \Bernouilli, \DataS)}\\
+  & = & \frac{\nu(\DataS | M \in L_{\Bernouilli})
+  \times \nu(M \in L_{\Bernouilli} | M \in \Bernouilli) \times \nu(M
+  \in \Bernouilli)} {\nu(M \in
+    \Bernouilli, \DataS)}
+\end{eqnarray}
+where $L_{\Bernouilli} \in \Field_{\Bernouilli}$.
 
 \subsection{Implication Direct Introduction}
 \label{sec:impldirect}
