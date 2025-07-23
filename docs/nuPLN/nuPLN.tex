@@ -39,9 +39,11 @@
 \newcommand{\Bernouillip}{\mathcal{B}_p}
 \newcommand{\Field}{\mathcal{F}}
 \newcommand{\Model}{M}
-\newcommand{\Datax}{D_x}
-\newcommand{\DataxD}{D_{x\in\Domain}}
-\newcommand{\DataS}{D_{\Subsetdom}}
+\newcommand{\Data}{D}
+\newcommand{\Datax}{\Data_{x}}
+\newcommand{\DataxD}{\Data_{x\in\Domain}}
+\newcommand{\DataS}{\Data_{\Subsetdom}}
+\newcommand{\Datai}{\Data_{i}}
 \newcommand{\STV}[2]{<\!#1, #2\!>}
 \newcommand{\limp}{\Rightarrow}
 \newcommand{\Nat}{\mathbb{N}}
@@ -381,24 +383,58 @@ distribution ranging over $[0, 1]$.  Such probabilistic program, when
 executed, outputs $\T$ with a probability of \mintinline{scheme}{p} or
 $\F$ with a probability of 1 - \mintinline{scheme}{p}.  Let
 $\Field_{\Bernouilli}$ be a Borel $\sigma$-algebra on $\Bernouilli$.
-Let us assume that $\Field_{\Bernouilli}$ is a subfield of
-$\Field_{\Language}$.  We claim that that if $\mu$ is restricted to
-the programs in $\Bernouilli$ then the posterior of
-\mintinline{scheme}{p} corresponds to the truth value of $\mu$,
-expressed as follows
+We can assume that $\Field_{\Bernouilli}$ is a subfield of
+$\Field_{\Language}$.  Let us first derive a set of generic equations
+involving the event $L_{\Bernouilli} \in \Field_{\Bernouilli}$ knowing
+observations $\DataS$ and the fact that the probabilistic programs
+under consideration are limited to Bernouilli samplers, that is $M \in
+\Bernouilli$:
 \begin{eqnarray}
   \nu(M \in L_{\Bernouilli} | M \in \Bernouilli, \DataS) & = &
-  \frac{\nu(M \in L_{\Bernouilli}, M \in \Bernouilli, \DataS)}{\nu(M
-    \in \Bernouilli, \DataS)}\\
-  & = & \frac{\nu(\DataS | M \in L_{\Bernouilli}, M \in \Bernouilli)
-  \times \nu(M \in L_{\Bernouilli}, M \in \Bernouilli)} {\nu(M \in
-    \Bernouilli, \DataS)}\\
-  & = & \frac{\nu(\DataS | M \in L_{\Bernouilli})
-  \times \nu(M \in L_{\Bernouilli} | M \in \Bernouilli) \times \nu(M
-  \in \Bernouilli)} {\nu(M \in
-    \Bernouilli, \DataS)}
+  \frac{\nu(M \in L_{\Bernouilli}, M \in \Bernouilli, \DataS)}
+       {\nu(M \in \Bernouilli, \DataS)} \label{eq:nubercond}\\
+  & = &
+  \frac{\nu(\DataS | M \in L_{\Bernouilli}, M \in \Bernouilli)
+        \times \nu(M \in L_{\Bernouilli}, M \in \Bernouilli)}
+       {\nu(M \in \Bernouilli, \DataS)} \label{eq:nubercondnum}\\
+  & = &
+  \frac{\nu(\DataS | M \in L_{\Bernouilli})
+        \times \nu(M \in L_{\Bernouilli}, M \in \Bernouilli)}
+       {\nu(M \in \Bernouilli, \DataS)} \label{eq:nubermarkov}\\
+  & = &
+  \frac{\nu(\DataS | M \in L_{\Bernouilli})
+        \times \nu(M \in L_{\Bernouilli} | M \in \Bernouilli)
+        \times \nu(M \in \Bernouilli)}
+       {\nu(\DataS | M \in \Bernouilli) \times \nu(M \in \Bernouilli)}
+       \label{eq:nubercondsubnum}\\
+  & = &
+  \frac{\nu(\DataS | M \in L_{\Bernouilli})
+        \times \nu(M \in L_{\Bernouilli} | M \in \Bernouilli)}
+       {\nu(\DataS | M \in \Bernouilli)} \label{eq:nubersmplf}\\
+  & = &
+  \frac{\prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernouilli})
+        \times \nu(M \in L_{\Bernouilli} | M \in \Bernouilli)}
+       {\prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernouilli)}
+       \label{eq:nuberiid}
 \end{eqnarray}
-where $L_{\Bernouilli} \in \Field_{\Bernouilli}$.
+Let us walk through each equation one by one.
+Equations~\ref{eq:nubercond} and~\ref{eq:nubercondnum} are derived
+from the definition of conditional probability.
+Equation~\ref{eq:nubermarkov} is obtained from the fact that
+$L_{\Bernouilli} \subseteq \Bernouilli$.
+Equation~\ref{eq:nubercondsubnum} is derived from the definition of
+conditional probability.  Equation \ref{eq:nubersmplf} is obtained by
+canceling out $\nu(M \in \Bernouilli)$ in the numerator and
+denominator.  If $M \in \Bernouilli$ then observations are independent
+and identically distributed (iid), therefore $\nu(\DataS | M \in
+\Bernouilli) = \prod_{i\in \Subsetdom} \nu(\Datai | M \in
+L_{\Bernouilli})$.  The same reasoning applies to $\nu(\DataS | M \in
+L_{\Bernouilli})$ since $L_{\Bernouilli} \subseteq \Bernouilli$,
+resulting in Equation~\ref{eq:nuberiid}.
+
+We claim that that if $\mu$ is restricted to the programs in
+$\Bernouilli$ then the posterior of \mintinline{scheme}{p} corresponds
+to the truth value of $\mu$, expressed as follows NEXT
 
 \subsection{Implication Direct Introduction}
 \label{sec:impldirect}
