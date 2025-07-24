@@ -18,6 +18,7 @@
 \usepackage{circledsteps}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{amssymb}
 
 % For ≞ (requires the LuaLaTeX engine)
 \usepackage{unicode-math}
@@ -35,8 +36,8 @@
 \newcommand{\Subsetdom}{\mathcal{S}}
 \newcommand{\Predicate}{\mathcal{P}}
 \newcommand{\Language}{\mathcal{L}}
-\newcommand{\Bernouilli}{\mathcal{B}}
-\newcommand{\Bernouillip}{\mathcal{B}_p}
+\newcommand{\Bernoulli}{\mathcal{B}}
+\newcommand{\Bernoullip}{\mathcal{B}_p}
 \newcommand{\Field}{\mathcal{F}}
 \newcommand{\Model}{M}
 \newcommand{\Data}{D}
@@ -45,6 +46,10 @@
 \newcommand{\DataS}{\Data_{\Subsetdom}}
 \newcommand{\Datai}{\Data_{i}}
 \newcommand{\STV}[2]{<\!#1, #2\!>}
+%% \newcommand{\TV}[1]{\text{TV}( #1 )}
+%% \newcommand{\CDF}[1]{\text{CDF}( #1 )}
+\newcommand{\TV}[1]{\text{TV}(#1)}
+\newcommand{\CDF}[1]{\text{CDF}_{#1}}
 \newcommand{\limp}{\Rightarrow}
 \newcommand{\Nat}{\mathbb{N}}
 \newcommand{\anymu}{\hat{\mu}}
@@ -205,21 +210,27 @@ elements of $\Language$.  It is because, for the purpose of recovering
 PLN with the Bayesian approach, $\Language$ needs to be continuous.  I
 will explain this in detail, but for now let us use this notation to
 formulate Bayes' theorem
-$$\nu(M \in L | \DataS) = \frac{\nu(M \in L) \times \nu(\DataS | M \in
-  L)}{\nu(\DataS)}$$ where $\Subsetdom$ is a finite subset of
-$\Domain$.  For the sake of simplicity, we may drop $M$ since it is
-the only random variable that ranges over $\Language$, and simply
-write
-$$\nu(L | \DataS) = \frac{\nu(L) \times \nu(\DataS |
-  L)}{\nu(\DataS)}$$
-An example of prior will be given in~\ref{TODO},
-but in general it can be viewed as a parameter of $\nuPLN$.  That is,
-given a certain prior of $\nu$ over $\Language$, one can derive a
-certain flavor of $\nuPLN$.  Since $(\mu\ x) = \Datax$, a history data
-point will be represented as $(\mu\ x) = \T$ or $(\mu\ x) = \F$, and
-the usage of the random variable $\Datax$, and especially $\DataS$,
-will be reserved in the formulation of $\nu$ to refer to the observed
-history.
+\begin{eqnarray}
+  \nu(M \in L | \DataS)
+  & = &
+  \frac{\nu(M \in L) \times \nu(\DataS | M \in L)}{\nu(\DataS)}
+  \label{eq:globaldist}
+\end{eqnarray}
+where $\Subsetdom$ is a finite subset of $\Domain$.  Sometimes, for
+the sake of simplicity, we may drop $M$ since it is the only random
+variable that ranges over $\Language$, and write instead
+\begin{eqnarray}
+  \nu(L | \DataS)
+  & = &
+  \frac{\nu(L) \times \nu(\DataS | L)}{\nu(\DataS)}
+\end{eqnarray}
+An example of prior will be given in~\ref{sec:derules}, but in general
+it can be viewed as a parameter of $\nuPLN$.  That is, given a certain
+prior of $\nu$ over $\Language$, one can derive a certain flavor of
+$\nuPLN$.  Since $(\mu\ x) = \Datax$, a history data point will be
+represented as $(\mu\ x) = \T$ or $(\mu\ x) = \F$, and the usage of
+the random variable $\Datax$, and especially $\DataS$, will be
+reserved in the formulation of $\nu$ to refer to the observed history.
 
 \subsection{PLN Global Distribution vs Solomonoff Induction}
 Note that unlike with Solomonoff Universal Induction, $\anymu$
@@ -276,7 +287,7 @@ of birds and whether or not they fly.  Meaning there could be an
 uncertainty on the 90\% itself.  To represent such uncertainty PLN
 uses a second order distribution, in this case a Beta distribution as
 it is an ideal choice to represent the posterior of the parameter of a
-Bernouilli distribution given observations.  Under this assumption
+Bernoulli distribution given observations.  Under this assumption
 only two numbers are required to determine the parameters, $\alpha$
 and $\beta$, of the associated Beta distribution.  A \emph{truth
 value} called \emph{simple truth value} was created for this purpose
@@ -368,73 +379,98 @@ it should be easier to understand the Implication Direct Introduction
 rule after understanding the Predicate Direct Introduction rule.
 
 To derive the predicate direct introduction rule we consider the
-posterior probability of a Bernouilli process with parameter $p$ given
+posterior probability of a Bernoulli process with parameter $p$ given
 all available observations of the predicate in question.  Let us begin
 with $\mu$ itself, the overarching predicate.  In order to formulate
-this posterior we need to assume that $\Language$ has a Bernouilli
-sampler in its set of operations.  Let $\Bernouilli$ be the subset of
-programs of $\Language$ consisting of a single Bernouilli call, thus
-$\Bernouilli$ is comprised of the following programs
+this posterior we need to assume that $\Language$ has a Bernoulli
+sampler, or Bernoulli process, in its set of operations.  Let
+$\Bernoulli$ be the subset of programs of $\Language$ consisting of a
+single Bernoulli call, thus $\Bernoulli$ is comprised of the following
+programs
 \begin{minted}{scheme}
-  (Bernouilli p)
+  (Bernoulli p)
 \end{minted}
-where \mintinline{scheme}{p} is the parameter of the Bernouilli
+where \mintinline{scheme}{p} is the parameter of the Bernoulli
 distribution ranging over $[0, 1]$.  Such probabilistic program, when
 executed, outputs $\T$ with a probability of \mintinline{scheme}{p} or
 $\F$ with a probability of 1 - \mintinline{scheme}{p}.  Let
-$\Field_{\Bernouilli}$ be a Borel $\sigma$-algebra on $\Bernouilli$.
-We can assume that $\Field_{\Bernouilli}$ is a subfield of
+$\Field_{\Bernoulli}$ be a Borel $\sigma$-algebra on $\Bernoulli$.  We
+can assume that $\Field_{\Bernoulli}$ is a subfield of
 $\Field_{\Language}$.  Let us first derive a set of generic equations
-involving the event $L_{\Bernouilli} \in \Field_{\Bernouilli}$ knowing
+involving the event $L_{\Bernoulli} \in \Field_{\Bernoulli}$ knowing
 observations $\DataS$ and the fact that the probabilistic programs
-under consideration are limited to Bernouilli samplers, that is $M \in
-\Bernouilli$:
+under consideration are limited to Bernoulli processes, that is $M \in
+\Bernoulli$:
+$$\nu(M \in L_{\Bernoulli} | \DataS, M \in \Bernoulli)$$
 \begin{eqnarray}
-  \nu(M \in L_{\Bernouilli} | M \in \Bernouilli, \DataS) & = &
-  \frac{\nu(M \in L_{\Bernouilli}, M \in \Bernouilli, \DataS)}
-       {\nu(M \in \Bernouilli, \DataS)} \label{eq:nubercond}\\
   & = &
-  \frac{\nu(\DataS | M \in L_{\Bernouilli}, M \in \Bernouilli)
-        \times \nu(M \in L_{\Bernouilli}, M \in \Bernouilli)}
-       {\nu(M \in \Bernouilli, \DataS)} \label{eq:nubercondnum}\\
+  \frac{\nu(M \in L_{\Bernoulli}, \DataS, M \in \Bernoulli)}
+       {\nu(\DataS, M \in \Bernoulli)} \label{eq:nubercond}\\
   & = &
-  \frac{\nu(\DataS | M \in L_{\Bernouilli})
-        \times \nu(M \in L_{\Bernouilli}, M \in \Bernouilli)}
-       {\nu(M \in \Bernouilli, \DataS)} \label{eq:nubermarkov}\\
+  \frac{\nu(\DataS | M \in L_{\Bernoulli}, M \in \Bernoulli)
+        \times \nu(M \in L_{\Bernoulli}, M \in \Bernoulli)}
+       {\nu(\DataS, M \in \Bernoulli)} \label{eq:nubercondnum}\\
   & = &
-  \frac{\nu(\DataS | M \in L_{\Bernouilli})
-        \times \nu(M \in L_{\Bernouilli} | M \in \Bernouilli)
-        \times \nu(M \in \Bernouilli)}
-       {\nu(\DataS | M \in \Bernouilli) \times \nu(M \in \Bernouilli)}
+  \frac{\nu(\DataS | M \in L_{\Bernoulli})
+        \times \nu(M \in L_{\Bernoulli}, M \in \Bernoulli)}
+       {\nu(\DataS, M \in \Bernoulli)} \label{eq:nubermarkov}\\
+  & = &
+  \frac{\nu(\DataS | M \in L_{\Bernoulli})
+        \times \nu(M \in L_{\Bernoulli} | M \in \Bernoulli)
+        \times \nu(M \in \Bernoulli)}
+       {\nu(\DataS | M \in \Bernoulli) \times \nu(M \in \Bernoulli)}
        \label{eq:nubercondsubnum}\\
   & = &
-  \frac{\nu(\DataS | M \in L_{\Bernouilli})
-        \times \nu(M \in L_{\Bernouilli} | M \in \Bernouilli)}
-       {\nu(\DataS | M \in \Bernouilli)} \label{eq:nubersmplf}\\
+  \frac{\nu(\DataS | M \in L_{\Bernoulli})
+        \times \nu(M \in L_{\Bernoulli} | M \in \Bernoulli)}
+       {\nu(\DataS | M \in \Bernoulli)} \label{eq:nubersmplf}\\
   & = &
-  \frac{\prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernouilli})
-        \times \nu(M \in L_{\Bernouilli} | M \in \Bernouilli)}
-       {\prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernouilli)}
+  \frac{\prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoulli})
+        \times \nu(M \in L_{\Bernoulli} | M \in \Bernoulli)}
+       {\prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}
        \label{eq:nuberiid}
 \end{eqnarray}
 Let us walk through each equation one by one.
-Equations~\ref{eq:nubercond} and~\ref{eq:nubercondnum} are derived
-from the definition of conditional probability.
-Equation~\ref{eq:nubermarkov} is obtained from the fact that
-$L_{\Bernouilli} \subseteq \Bernouilli$.
+Equations~\ref{eq:nubercond} is derived from the definition of
+conditional probability, so is Equation~\ref{eq:nubercondnum}.  The
+latter is a specialization of Equation~\ref{eq:globaldist} restricted
+to Bernoulli processes.  Equation~\ref{eq:nubermarkov} is obtained
+from the fact that $L_{\Bernoulli} \subseteq \Bernoulli$.
 Equation~\ref{eq:nubercondsubnum} is derived from the definition of
 conditional probability.  Equation \ref{eq:nubersmplf} is obtained by
-canceling out $\nu(M \in \Bernouilli)$ in the numerator and
-denominator.  If $M \in \Bernouilli$ then observations are independent
+canceling out $\nu(M \in \Bernoulli)$ in the numerator and
+denominator.  If $M \in \Bernoulli$ then observations are independent
 and identically distributed (iid), therefore $\nu(\DataS | M \in
-\Bernouilli) = \prod_{i\in \Subsetdom} \nu(\Datai | M \in
-L_{\Bernouilli})$.  The same reasoning applies to $\nu(\DataS | M \in
-L_{\Bernouilli})$ since $L_{\Bernouilli} \subseteq \Bernouilli$,
-resulting in Equation~\ref{eq:nuberiid}.
+\Bernoulli) = \prod_{i\in \Subsetdom} \nu(\Datai | M \in
+L_{\Bernoulli})$.  The same applies to $\nu(\DataS | M \in
+L_{\Bernoulli})$ since $L_{\Bernoulli} \subseteq \Bernoulli$,
+resulting in Equation~\ref{eq:nuberiid}.\\
 
-We claim that that if $\mu$ is restricted to the programs in
-$\Bernouilli$ then the posterior of \mintinline{scheme}{p} corresponds
-to the truth value of $\mu$, expressed as follows NEXT
+We claim that the PLN truth value of $\mu$, $\TV{\mu}$, expressed as
+the cumulative distribution function of its corresponding second order
+probability distribution, $\CDF{\TV{\mu}}$, is defined by the
+following equation
+\begin{eqnarray}
+  \CDF{\TV{\mu}}(x) & = & \nu(M \in L_{\Bernoulli[0,x]} | M \in \Bernoulli,
+  \DataS) \times \nu(\DataS | M \in \Bernoulli)
+\end{eqnarray}
+where $L_{\Bernoulli[0,x]} \in \Field_{\Bernoulli}$ is the set of
+Bernoulli processes with parameter \mintinline{scheme}{p} ranging over
+$[0, x]$.  To justify that claim let us first focus on $\nu(M \in
+L_{\Bernoulli[0,x]} | M \in \Bernoulli, \DataS)$.  Thanks to
+Equation~\ref{eq:nuberiid} we can establish\\
+\begin{minipage}{\textwidth}
+  $$\nu(M \in L_{\Bernoulli[0,x]} | \DataS, M \in \Bernoulli)$$
+  \begin{eqnarray}
+    & = &
+    \frac{\prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoulli[0,x]})
+      \times \nu(M \in L_{\Bernoulli[0,x]} | M \in \Bernoulli)}
+         {\prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}
+         \label{eq:nuberiidcdf}
+  \end{eqnarray}
+\end{minipage}
+
+NEXT
 
 \subsection{Implication Direct Introduction}
 \label{sec:impldirect}
@@ -446,13 +482,13 @@ the strength part.  To obtain the confidence part we assume that the
 second order distribution is a Beta distribution, like in the Section
 4.2 \emph{From Imprecise Probabilities to Indefinite Probabilities} of
 the PLN book.  In order to derive a Beta distribution as second order
-distribution we can assume an underlying Bernouilli process with
+distribution we can assume an underlying Bernoulli process with
 parameter $p$ with a Beta distribution as prior.  The Jeffreys prior
 where $\alpha=\beta=\frac{1}{2}$ is often the default choice.  Given
 the PLN statement
 $$P \limp Q$$ Let us express its truth value as the posterior
-probability of the parameter $p$ of the underlying Bernouilli process.
-In order to map a Bernouilli process onto an implication we zoom-in to
+probability of the parameter $p$ of the underlying Bernoulli process.
+In order to map a Bernoulli process onto an implication we zoom-in to
 the data points where $P$ is true.
 
 NEXT
