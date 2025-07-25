@@ -37,7 +37,8 @@
 \newcommand{\Predicate}{\mathcal{P}}
 \newcommand{\Language}{\mathcal{L}}
 \newcommand{\Bernoulli}{\mathcal{B}}
-\newcommand{\Bernoullip}{\mathcal{B}_p}
+\newcommand{\Bernoullizx}{\Bernoulli[0,x]}
+\newcommand{\Bernoullidt}{\Bernoulli_{d\theta}}
 \newcommand{\Field}{\mathcal{F}}
 \newcommand{\Model}{M}
 \newcommand{\Data}{D}
@@ -451,26 +452,63 @@ the cumulative distribution function of its corresponding second order
 probability distribution, $\CDF{\TV{\mu}}$, is defined by the
 following equation
 \begin{eqnarray}
-  \CDF{\TV{\mu}}(x) & = & \nu(M \in L_{\Bernoulli[0,x]} | M \in \Bernoulli,
+  \CDF{\TV{\mu}}(x) & = & \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli,
   \DataS) \times \nu(\DataS | M \in \Bernoulli)
 \end{eqnarray}
-where $L_{\Bernoulli[0,x]} \in \Field_{\Bernoulli}$ is the set of
+where $L_{\Bernoullizx} \in \Field_{\Bernoulli}$ is the set of
 Bernoulli processes with parameter \mintinline{scheme}{p} ranging over
 $[0, x]$.  To justify that claim let us first focus on $\nu(M \in
-L_{\Bernoulli[0,x]} | \DataS, M \in \Bernoulli)$.  Thanks to
-Equation~\ref{eq:nuberiid} we can establish that\\
-\begin{minipage}{\textwidth}
-  $$\nu(M \in L_{\Bernoulli[0,x]} | \DataS, M \in \Bernoulli)$$
-  \begin{eqnarray}
-    & = &
-    \frac{\prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoulli[0,x]})
-      \times \nu(M \in L_{\Bernoulli[0,x]} | M \in \Bernoulli)}
-         {\prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}
-         \label{eq:nuberiidcdf}
-  \end{eqnarray}
-\end{minipage}
-
-NEXT
+L_{\Bernoullizx} | \DataS, M \in \Bernoulli)$.
+\newpage
+Thanks to Equation~\ref{eq:nuberiid} we can establish that
+$$\nu(M \in L_{\Bernoullizx} | \DataS, M \in \Bernoulli)$$
+\begin{eqnarray}
+  & = &
+  \frac{\displaystyle
+        \prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoullizx})
+        \times \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)}
+       {\displaystyle
+        \prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}
+  \label{eq:nuberiidcdf}\\
+  & = &
+  \frac{\displaystyle
+        \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)
+        \times
+        \prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoullizx})}
+       {\displaystyle
+        \prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}\\
+  & = &
+  \frac{\displaystyle
+        \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)
+        \times
+        \prod_{i\in \Subsetdom} \nu(\Datai, M \in L_{\Bernoullizx})}
+       {\displaystyle
+        \nu(M \in L_{\Bernoullizx})
+        \times
+        \prod_{i\in \Subsetdom}
+        \nu(\Datai | M \in \Bernoulli)}\\
+  & = &
+  \frac{\displaystyle
+        \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)
+        \times
+        \int_0^x \prod_{i\in \Subsetdom} \nu(\Datai, M \in L_{\Bernoullidt})}
+       {\displaystyle
+        \int_0^x \nu(M \in L_{\Bernoullidt})
+        \times
+        \prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}\\
+  & = &
+  \frac{\displaystyle
+        \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)
+        \times
+        \int_0^x \prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoulli_{d\theta}})
+        \times \nu(M \in L_{\Bernoulli_{d\theta}})}
+       {\displaystyle
+        \int_0^x \nu(M \in L_{\Bernoullidt})
+        \times
+        \prod_{i\in \Subsetdom}
+        \nu(\Datai | M \in \Bernoulli)}\\
+  & = & NEXT
+\end{eqnarray}
 
 \subsection{Implication Direct Introduction}
 \label{sec:impldirect}
