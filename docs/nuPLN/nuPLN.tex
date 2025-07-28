@@ -30,10 +30,10 @@
 %% \newcommand{\Bool}{\mathbb{B}}
 \newcommand{\Bool}{\textup{Bool}}
 %% \newcommand{\Bool}{B}
-\newcommand{\T}{\texttt{True}}
-\newcommand{\F}{\texttt{False}}
+\newcommand{\True}{\texttt{True}}
+\newcommand{\False}{\texttt{False}}
 \newcommand{\Domain}{\mathcal{D}}
-\newcommand{\Subsetdom}{\mathcal{S}}
+\newcommand{\Subdom}{\mathcal{S}}
 \newcommand{\Predicate}{\mathcal{P}}
 \newcommand{\Language}{\mathcal{L}}
 \newcommand{\Bernoulli}{\mathcal{B}}
@@ -44,7 +44,7 @@
 \newcommand{\Data}{D}
 \newcommand{\Datax}{\Data_{x}}
 \newcommand{\DataxD}{\Data_{x\in\Domain}}
-\newcommand{\DataS}{\Data_{\Subsetdom}}
+\newcommand{\DataS}{\Data_{\Subdom}}
 \newcommand{\Datai}{\Data_{i}}
 \newcommand{\STV}[2]{<\!#1, #2\!>}
 %% \newcommand{\TV}[1]{\text{TV}( #1 )}
@@ -115,7 +115,7 @@ Let $(\Omega, \Field, \nu)$ be a probability space such that
     $\Language$,
   \item a mapping of $\anymu$ from $\Domain$ to Boolean.  For instance
     if $\Domain$ is $\Nat$, then a possible mapping could be
-    $(\anymu\ 0) = \T,\ (\anymu\ 1) = \F, \ (\anymu\ 2) = \T, \dots$,
+    $(\anymu\ 0) = \True,\ (\anymu\ 1) = \False, \ (\anymu\ 2) = \True, \dots$,
     corresponding so far to a predicate indicating the evenness of a
     natural number.  Note that the world $\anyomega$ contains
     the entire, potentially infinite, mapping, even though in reality
@@ -137,7 +137,7 @@ is clear that the definitions are generic and apply to any arbitrary
 world and the true world alike, we will use $\omega$ and $\mu$ as
 well.  Since $\mu$ is a probabilistic predicate, its type signature
 cannot merely be
-$$\mu : \Domain \to \Bool$$ where $\Bool = \{\F, \T\}$.  To capture
+$$\mu : \Domain \to \Bool$$ where $\Bool = \{\False, \True\}$.  To capture
 its probabilistic nature we give it the following type signature
 $$\mu : \Domain \to \Omega \to \Bool$$ in a curried fashion.  Meaning
 that given its argument, it produces a boolean random variable.
@@ -189,7 +189,7 @@ With that, let us now define key random variables to access $\Omega$:
 \item $\DataxD : \Omega \to \Bool$, a Boolean random variable indexed
   by values in $\Domain$.  Unlike $\Model$, $\DataxD$ is at least
   partially accessible from an observer within that world.  Meaning,
-  such observer can gather data for a finite subset $\Subsetdom$ of
+  such observer can gather data for a finite subset $\Subdom$ of
   $\Domain$.  In this case $\DataS$ represents a finite family of
   Boolean random variables, corresponding the set of accessible
   observations.  $\Model$ and $\DataxD$ are related by the following
@@ -217,7 +217,7 @@ formulate Bayes' theorem
   \frac{\nu(M \in L) \times \nu(\DataS | M \in L)}{\nu(\DataS)}
   \label{eq:globaldist}
 \end{eqnarray}
-where $\Subsetdom$ is a finite subset of $\Domain$.  Sometimes, for
+where $\Subdom$ is a finite subset of $\Domain$.  Sometimes, for
 the sake of simplicity, we may drop $M$ since it is the only random
 variable that ranges over $\Language$, and write instead
 \begin{eqnarray}
@@ -229,7 +229,7 @@ An example of prior will be given in~\ref{sec:derules}, but in general
 it can be viewed as a parameter of $\nuPLN$.  That is, given a certain
 prior of $\nu$ over $\Language$, one can derive a certain flavor of
 $\nuPLN$.  Since $(\mu\ x) = \Datax$, a history data point will be
-represented as $(\mu\ x) = \T$ or $(\mu\ x) = \F$, and the usage of
+represented as $(\mu\ x) = \True$ or $(\mu\ x) = \False$, and the usage of
 the random variable $\Datax$, and especially $\DataS$, will be
 reserved in the formulation of $\nu$ to refer to the observed history.
 
@@ -393,8 +393,8 @@ programs
 \end{minted}
 where \mintinline{scheme}{p} is the parameter of the Bernoulli
 distribution ranging over $[0, 1]$.  Such probabilistic program, when
-executed, outputs $\T$ with a probability of \mintinline{scheme}{p} or
-$\F$ with a probability of 1 - \mintinline{scheme}{p}.  Let
+executed, outputs $\True$ with a probability of \mintinline{scheme}{p} or
+$\False$ with a probability of 1 - \mintinline{scheme}{p}.  Let
 $\Field_{\Bernoulli}$ be a Borel $\sigma$-algebra on $\Bernoulli$.  We
 can assume that $\Field_{\Bernoulli}$ is a subfield of
 $\Field_{\Language}$.  Let us first derive a set of generic equations
@@ -426,9 +426,9 @@ $$\nu(M \in L_{\Bernoulli} | \DataS, M \in \Bernoulli)$$
         \times \nu(M \in L_{\Bernoulli} | M \in \Bernoulli)}
        {\nu(\DataS | M \in \Bernoulli)} \label{eq:nubersmplf}\\
   & = &
-  \frac{\prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoulli})
+  \frac{\prod_{i\in \Subdom} \nu(\Datai | M \in L_{\Bernoulli})
         \times \nu(M \in L_{\Bernoulli} | M \in \Bernoulli)}
-       {\prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}
+       {\prod_{i\in \Subdom} \nu(\Datai | M \in \Bernoulli)}
        \label{eq:nuberiid}
 \end{eqnarray}
 Let us walk through each equation one by one.
@@ -442,7 +442,7 @@ conditional probability.  Equation \ref{eq:nubersmplf} is obtained by
 canceling out $\nu(M \in \Bernoulli)$ in the numerator and
 denominator.  If $M \in \Bernoulli$ then observations are independent
 and identically distributed (iid), therefore $\nu(\DataS | M \in
-\Bernoulli) = \prod_{i\in \Subsetdom} \nu(\Datai | M \in
+\Bernoulli) = \prod_{i\in \Subdom} \nu(\Datai | M \in
 L_{\Bernoulli})$.  The same applies to $\nu(\DataS | M \in
 L_{\Bernoulli})$ since $L_{\Bernoulli} \subseteq \Bernoulli$,
 resulting in Equation~\ref{eq:nuberiid}.\\
@@ -456,59 +456,86 @@ following equation
   \DataS) \times \nu(\DataS | M \in \Bernoulli)
 \end{eqnarray}
 where $L_{\Bernoullizx} \in \Field_{\Bernoulli}$ is the set of
-Bernoulli processes with parameter \mintinline{scheme}{p} ranging over
-$[0, x]$.  To justify that claim let us first focus on $\nu(M \in
-L_{\Bernoullizx} | \DataS, M \in \Bernoulli)$.
+Bernoulli processes with parameter $\theta$ ranging over $[0, x]$.  To
+justify that claim let us first focus on $\nu(M \in L_{\Bernoullizx} |
+\DataS, M \in \Bernoulli)$.
 \newpage
-Thanks to Equation~\ref{eq:nuberiid} we can establish that
 $$\nu(M \in L_{\Bernoullizx} | \DataS, M \in \Bernoulli)$$
 \begin{eqnarray}
   & = &
   \frac{\displaystyle
-        \prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoullizx})
+        \prod_{i\in \Subdom} \nu(\Datai | M \in L_{\Bernoullizx})
         \times \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)}
        {\displaystyle
-        \prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}
+        \prod_{i\in \Subdom} \nu(\Datai | M \in \Bernoulli)}
   \label{eq:nuberiidcdf}\\
   & = &
   \frac{\displaystyle
-        \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)
-        \times
-        \prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoullizx})}
+        \prod_{i\in \Subdom}
+        \nu(\Datai, M \in L_{\Bernoullizx} | M \in \Bernoulli)}
        {\displaystyle
-        \prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}\\
+        \prod_{i\in \Subdom}
+        \nu(\Datai | M \in \Bernoulli)}
+       \label{eq:nuberiidsimp}\\
   & = &
   \frac{\displaystyle
-        \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)
-        \times
-        \prod_{i\in \Subsetdom} \nu(\Datai, M \in L_{\Bernoullizx})}
+        \int_0^x
+        \prod_{i\in \Subdom}
+        \nu(\Datai, M \in L_{\Bernoullidt} | M \in \Bernoulli)}
        {\displaystyle
-        \nu(M \in L_{\Bernoullizx})
-        \times
-        \prod_{i\in \Subsetdom}
-        \nu(\Datai | M \in \Bernoulli)}\\
+        \prod_{i\in \Subdom}
+        \nu(\Datai | M \in \Bernoulli)}
+       \label{eq:nuberint}\\
   & = &
   \frac{\displaystyle
-        \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)
+        \int_0^x
+        \prod_{i\in \Subdom}
+        \nu(\Datai | M \in L_{\Bernoullidt})
         \times
-        \int_0^x \prod_{i\in \Subsetdom} \nu(\Datai, M \in L_{\Bernoullidt})}
+        \nu(M \in L_{\Bernoullidt} | M \in \Bernoulli)}
        {\displaystyle
-        \int_0^x \nu(M \in L_{\Bernoullidt})
-        \times
-        \prod_{i\in \Subsetdom} \nu(\Datai | M \in \Bernoulli)}\\
+        \prod_{i\in \Subdom}
+        \nu(\Datai | M \in \Bernoulli)}
+       \label{eq:nuberintcond}\\
   & = &
   \frac{\displaystyle
-        \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)
+        \int_0^x
+        \theta^n \times (1-\theta)^{(N-n)}
         \times
-        \int_0^x \prod_{i\in \Subsetdom} \nu(\Datai | M \in L_{\Bernoulli_{d\theta}})
-        \times \nu(M \in L_{\Bernoulli_{d\theta}})}
+        \nu(M \in L_{\Bernoullidt} | M \in \Bernoulli)}
        {\displaystyle
-        \int_0^x \nu(M \in L_{\Bernoullidt})
-        \times
-        \prod_{i\in \Subsetdom}
-        \nu(\Datai | M \in \Bernoulli)}\\
-  & = & NEXT
+        \prod_{i\in \Subdom}
+        \nu(\Datai | M \in \Bernoulli)}
+       \label{eq:nuberbinom}
 \end{eqnarray}
+Equation~\ref{eq:nuberiidcdf} is a special case of
+Equation~\ref{eq:nuberiid} where $L_{\Bernoulli}$ is restricted to the
+class of Bernoulli process where the parameter $\theta$ ranges from 0
+to some value $x \in [0, 1]$, in order to define a CDF.
+Equation~\ref{eq:nuberiidsimp} is a simplification of
+Equation~\ref{eq:nuberiidcdf} obtained from the fact that
+\begin{eqnarray}
+  \nu(\Datai | M \in L_{\Bernoullizx})
+  %% & = &
+  %% \nu(\Datai | M \in L_{\Bernoullizx}, M \in \Bernoulli)\\
+  & = &
+  \frac{\nu(\Datai, M \in L_{\Bernoullizx}, M \in \Bernoulli)}
+       {\nu(M \in L_{\Bernoullizx}, M \in \Bernoulli)}\\
+  & = &
+  \frac{\nu(\Datai, M \in L_{\Bernoullizx} | M \in \Bernoulli)}
+       {\nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)}
+\end{eqnarray}
+Equation~\ref{eq:nuberint} is obtained by integrating over the
+parameter $\theta$, that is using the additive law of probability,
+where $L_{\Bernoullidt}$ is the set of Bernoulli processes with
+parameters within an arbitrarily small interval centered around
+$\theta$.  Equation~\ref{eq:nuberintcond} is obtained from the
+definition of conditional probability.  Equation~\ref{eq:nuberbinom}
+is obtained from the likelihood of $(\Datai)_{i\in \Subdom}$ given a
+Bernoulli process of parameter $\theta$, where $n$ is the number of
+positive pieces of evidence, that is the carnality of $\{i\in \Subdom
+| (\mu\ i) = \True\}$, and $N$ is the total number of pieces of
+evidence, that is the carnality of $\Subdom$.
 
 \subsection{Implication Direct Introduction}
 \label{sec:impldirect}
