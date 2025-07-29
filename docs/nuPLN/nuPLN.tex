@@ -38,6 +38,7 @@
 \newcommand{\Language}{\mathcal{L}}
 \newcommand{\Bernoulli}{\mathcal{B}}
 \newcommand{\Bernoullizx}{\Bernoulli[0,x]}
+\newcommand{\Bernoullizo}{\Bernoulli[0,1]}
 \newcommand{\Bernoullidt}{\Bernoulli_{d\theta}}
 \newcommand{\Field}{\mathcal{F}}
 \newcommand{\Model}{M}
@@ -449,17 +450,47 @@ resulting in Equation~\ref{eq:nuberiid}.\\
 
 We claim that the PLN truth value of $\mu$, $\TV{\mu}$, expressed as
 the cumulative distribution function of its corresponding second order
-probability distribution, $\CDF{\TV{\mu}}$, is defined by the
-following equation
+probability distribution, $\CDF{\TV{\mu}}$, is defined as follows
 \begin{eqnarray}
-  \CDF{\TV{\mu}}(x) & = & \nu(M \in L_{\Bernoullizx} | M \in \Bernoulli,
-  \DataS) \times \nu(\DataS | M \in \Bernoulli)
+  \CDF{\TV{\mu}}(x)
+  & = &
+  \nu(M \in L_{\Bernoullizx} | \DataS, M \in \Bernoulli)
 \end{eqnarray}
 where $L_{\Bernoullizx} \in \Field_{\Bernoulli}$ is the set of
-Bernoulli processes with parameter $\theta$ ranging over $[0, x]$.  To
-justify that claim let us first focus on $\nu(M \in L_{\Bernoullizx} |
-\DataS, M \in \Bernoulli)$.
-\newpage
+Bernoulli processes with parameter $\theta$ ranging over $[0, x]$.
+More specifically, assuming that the prior distribution
+$$\nu(M \in L_{\Bernoulli[0,x]} | M \in \Bernoulli)$$
+is a beta distribution with parameters $\alpha_0$ and $\beta_0$, that
+is
+\begin{eqnarray}
+  \nu(M \in L_{\Bernoulli[0,x]} | M \in \Bernoulli)
+  & = &
+  I_x(\alpha_0, \beta_0)
+  \label{eq:betaprior}
+\end{eqnarray}
+where $I_x$ is defined as
+\begin{eqnarray}
+  I_x(\alpha, \beta) & = & \frac{B(x; \alpha, \beta)}{B(\alpha, \beta)}
+\end{eqnarray}
+where $B(x; \alpha, \beta)$ is the \emph{regularized incomplete beta
+function}, defined as
+\begin{eqnarray}
+  B(x; \alpha, \beta)
+  & = &
+  \displaystyle
+  \int_0^x \theta^{\alpha-1}\times (1-\theta)^{\beta-1} \times d\theta
+  \label{eq:regibeta}
+\end{eqnarray}
+and $B(\alpha, \beta) = B(1; \alpha, \beta)$ is the beta function.
+Then
+\begin{eqnarray}
+  \CDF{\TV{\mu}}(x)
+  & = & I_x(n+\alpha_0, N - n + \beta_0)\label{eq:tvmui}
+\end{eqnarray}
+where $n$ is the number of positive pieces of evidence (corresponding
+to the cardinality of $\{i\in \Subdom\ |\ (\mu\ i) = \True\}$) and $N$
+is the total number of pieces of evidence (corresponding to the
+cardinality of $\Subdom$).  To justify that claim let us focus on
 $$\nu(M \in L_{\Bernoullizx} | \DataS, M \in \Bernoulli)$$
 \begin{eqnarray}
   & = &
@@ -479,45 +510,34 @@ $$\nu(M \in L_{\Bernoullizx} | \DataS, M \in \Bernoulli)$$
        \label{eq:nuberiidsimp}\\
   & = &
   \frac{\displaystyle
-        \int_0^x
         \prod_{i\in \Subdom}
-        \nu(\Datai, M \in L_{\Bernoullidt} | M \in \Bernoulli)}
+        \nu(\Datai, M \in L_{\Bernoullizx} | M \in \Bernoulli)}
        {\displaystyle
         \prod_{i\in \Subdom}
-        \nu(\Datai | M \in \Bernoulli)}
-       \label{eq:nuberint}\\
+        \nu(\Datai, M \in L_{\Bernoullizo} | M \in \Bernoulli)}
+       \label{eq:nuberiidxt}\\
   & = &
   \frac{\displaystyle
         \int_0^x
-        \prod_{i\in \Subdom}
-        \nu(\Datai | M \in L_{\Bernoullidt})
-        \times
-        \nu(M \in L_{\Bernoullidt} | M \in \Bernoulli)}
+        \theta^{n + \alpha_0 - 1} \times (1-\theta)^{N-n + \beta_0 - 1} \times d\theta}
        {\displaystyle
-        \prod_{i\in \Subdom}
-        \nu(\Datai | M \in \Bernoulli)}
-       \label{eq:nuberintcond}\\
+        \int_0^1
+        \theta^{n + \alpha_0 - 1} \times (1-\theta)^{N-n + \beta_0 - 1} \times d\theta}
+       \label{eq:nuberintfin}\\
   & = &
-  \frac{\displaystyle
-        \int_0^x
-        \theta^n \times (1-\theta)^{(N-n)}
-        \times
-        \nu(M \in L_{\Bernoullidt} | M \in \Bernoulli)}
-       {\displaystyle
-        \prod_{i\in \Subdom}
-        \nu(\Datai | M \in \Bernoulli)}
-       \label{eq:nuberbinom}
+  \frac{B(x; n + \alpha_0, N-n + \beta_0)}{B(n + \alpha_0, N-n + \beta_0)}
+  \label{eq:nuberbeta}
+  %% & = & I_x(n + \alpha_0, N-n + \beta_0)
 \end{eqnarray}
-Equation~\ref{eq:nuberiidcdf} is a special case of
-Equation~\ref{eq:nuberiid} where $L_{\Bernoulli}$ is restricted to the
-class of Bernoulli process where the parameter $\theta$ ranges from 0
-to some value $x \in [0, 1]$, in order to define a CDF.
-Equation~\ref{eq:nuberiidsimp} is a simplification of
-Equation~\ref{eq:nuberiidcdf} obtained from the fact that
+which, by the definition of $I_x$, results in Equation~\ref{eq:tvmui}.
+Let us detail this derivation.  Equation~\ref{eq:nuberiidcdf} is a
+special case of Equation~\ref{eq:nuberiid} where $L_{\Bernoulli}$ is
+restricted to the class of Bernoulli processes where the parameter
+$\theta$ ranges from 0 to $x$.  Equation~\ref{eq:nuberiidsimp} is a
+simplification of Equation~\ref{eq:nuberiidcdf} obtained from the fact
+that
 \begin{eqnarray}
   \nu(\Datai | M \in L_{\Bernoullizx})
-  %% & = &
-  %% \nu(\Datai | M \in L_{\Bernoullizx}, M \in \Bernoulli)\\
   & = &
   \frac{\nu(\Datai, M \in L_{\Bernoullizx}, M \in \Bernoulli)}
        {\nu(M \in L_{\Bernoullizx}, M \in \Bernoulli)}\\
@@ -525,17 +545,71 @@ Equation~\ref{eq:nuberiidcdf} obtained from the fact that
   \frac{\nu(\Datai, M \in L_{\Bernoullizx} | M \in \Bernoulli)}
        {\nu(M \in L_{\Bernoullizx} | M \in \Bernoulli)}
 \end{eqnarray}
+Equation~\ref{eq:nuberiidxt} is merely obtain from the definition of
+conditional probability and the fact that $L_{\Bernoullizo} =
+\Bernoulli$.  Equation~\ref{eq:nuberintfin} is derived as follows,
+considering first the numerator
+$$\displaystyle \prod_{i\in \Subdom} \nu(\Datai, M \in
+L_{\Bernoullizx} | M \in \Bernoulli)$$
+\begin{eqnarray}
+  & = &
+  \displaystyle
+  \int_0^x
+  \prod_{i\in \Subdom}
+  \nu(\Datai, M \in L_{\Bernoullidt} | M \in \Bernoulli)
+  \label{eq:nuberint}\\
+  & = &
+  \displaystyle
+  \int_0^x
+  \prod_{i\in \Subdom}
+  \nu(\Datai | M \in L_{\Bernoullidt})
+  \times
+  \nu(M \in L_{\Bernoullidt} | M \in \Bernoulli)
+  \label{eq:nuberintcond}\\
+  & = &
+  \displaystyle
+  \int_0^x
+  \theta^n \times (1-\theta)^{N-n}
+  \times
+  \nu(M \in L_{\Bernoullidt} | M \in \Bernoulli)
+  \label{eq:nuberbinom}\\
+  & = &
+  \int_0^x
+  \displaystyle
+  \theta^n \times (1-\theta)^{N-n}
+  \times
+  \frac{
+    \theta^{\alpha_0 - 1} \times (1-\theta)^{\beta_0 - 1} \times
+    d\theta}
+       {B(\alpha_0, \beta_0)}
+  \label{eq:nuberalm}\\
+  & = &
+  \frac{
+    \displaystyle
+    \int_0^x
+    \theta^{n + \alpha_0 - 1} \times (1-\theta)^{N-n + \beta_0 - 1}
+    \times d\theta}
+       {B(\alpha_0, \beta_0)}
+  \label{eq:nuberthere}
+\end{eqnarray}
 Equation~\ref{eq:nuberint} is obtained by integrating over the
-parameter $\theta$, that is using the additive law of probability,
-where $L_{\Bernoullidt}$ is the set of Bernoulli processes with
-parameters within an arbitrarily small interval centered around
-$\theta$.  Equation~\ref{eq:nuberintcond} is obtained from the
-definition of conditional probability.  Equation~\ref{eq:nuberbinom}
-is obtained from the likelihood of $(\Datai)_{i\in \Subdom}$ given a
-Bernoulli process of parameter $\theta$, where $n$ is the number of
-positive pieces of evidence, that is the carnality of $\{i\in \Subdom
-| (\mu\ i) = \True\}$, and $N$ is the total number of pieces of
-evidence, that is the carnality of $\Subdom$.
+parameter $\theta$, using the additive law of probability, where
+$L_{\Bernoullidt}$ is the set of Bernoulli processes with parameters
+set within an arbitrarily small interval centered around $\theta$.
+Equation~\ref{eq:nuberintcond} is obtained from the definition of
+conditional probability.  Equation~\ref{eq:nuberbinom} is obtained
+from the likelihood of $(\Datai)_{i\in \Subdom}$ given a Bernoulli
+process of parameter $\theta$, where $n$ is the number of positive
+pieces of evidence and $N$ is the total number of pieces of evidence.
+Equation~\ref{eq:nuberalm} comes from the beta distribution prior
+defined in Equation~\ref{eq:betaprior}.  Equation~\ref{eq:nuberthere}
+is obtained by factorizing the powers over $\theta$ and $1-\theta$.
+The denominator of Equation~\ref{eq:nuberintfin} is obtained
+analogously, then Equation~\ref{eq:nuberintfin} is obtained because
+$B(\alpha_0, \beta_0)$ on the numerator and denominator cancels out.
+Finally Equation~\ref{eq:nuberbeta} is obtained from the definition of
+the regularized incomplete beta function in
+Equation~\ref{eq:regibeta}.
 
 \subsection{Implication Direct Introduction}
 \label{sec:impldirect}
