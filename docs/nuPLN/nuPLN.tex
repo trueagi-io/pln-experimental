@@ -116,11 +116,11 @@ Let $(\Omega, \Field, \nu)$ be a probability space such that
     $\Language$,
   \item a mapping of $\anymu$ from $\Domain$ to Boolean.  For instance
     if $\Domain$ is $\Nat$, then a possible mapping could be
-    $(\anymu\ 0) = \True,\ (\anymu\ 1) = \False, \ (\anymu\ 2) = \True, \dots$,
-    corresponding so far to a predicate indicating the evenness of a
-    natural number.  Note that the world $\anyomega$ contains
-    the entire, potentially infinite, mapping, even though in reality
-    an observer can only have access to a finite subset of it.
+    $(\anymu\ 0) = \True,\ (\anymu\ 1) = \False, \ (\anymu\ 2) =
+    \True, \dots$, corresponding so far to a predicate indicating the
+    evenness of a natural number.  Note that the world $\anyomega$
+    contains the entire, potentially infinite, mapping, even though in
+    reality an observer can only have access to a finite subset of it.
   \end{enumerate}
 \end{itemize}
 An observer lives in a particular world $\omega \in \Omega$, called
@@ -389,13 +389,10 @@ sampler, or Bernoulli process, in its set of operations.  Let
 $\Bernoulli$ be the subset of programs of $\Language$ consisting of a
 single Bernoulli call, thus $\Bernoulli$ is comprised of the following
 programs
-\begin{minted}{scheme}
-  (Bernoulli p)
-\end{minted}
-where \mintinline{scheme}{p} is the parameter of the Bernoulli
-distribution ranging over $[0, 1]$.  Such probabilistic program, when
-executed, outputs $\True$ with a probability of \mintinline{scheme}{p} or
-$\False$ with a probability of 1 - \mintinline{scheme}{p}.  Let
+$$(\texttt{Bernoulli}\ \theta)$$ where $\theta$ is the parameter of
+the Bernoulli distribution ranging over $[0, 1]$.  Such probabilistic
+program, when executed, outputs $\True$ with a probability of $\theta$
+or $\False$ with a probability of $1 - \theta$.  Let
 $\Field_{\Bernoulli}$ be a Borel $\sigma$-algebra on $\Bernoulli$.  We
 can assume that $\Field_{\Bernoulli}$ is a subfield of
 $\Field_{\Language}$.  Let us first derive a set of generic equations
