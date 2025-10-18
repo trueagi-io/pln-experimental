@@ -287,15 +287,15 @@ $$(\texttt{Inheritance}\ \texttt{Bird}\ \texttt{Fly}) \measeq 0.9$$
 Such knowledge might have been obtained by observing a finite sample
 of birds and whether or not they fly.  Meaning there could be an
 uncertainty on the 90\% itself.  To represent such uncertainty PLN
-uses a second order distribution, in this case a Beta distribution as
+uses a second order distribution, in this case a beta distribution as
 it is an ideal choice to represent the posterior of the parameter of a
 Bernoulli distribution given observations.  Under this assumption
 only two numbers are required to determine the parameters, $\alpha$
-and $\beta$, of the associated Beta distribution.  A \emph{truth
+and $\beta$, of the associated beta distribution.  A \emph{truth
 value} called \emph{simple truth value} was created for this purpose
 and is thus described by two numbers: a strength (a proxy for a
 probability estimate) and a confidence over this strength from which
-the $\alpha$ and $\beta$ parameters of the Beta distribution can be
+the $\alpha$ and $\beta$ parameters of the beta distribution can be
 recovered.  For instance, given a simple truth value one may express
 that 90\% of birds fly with a confidence of 0.99
 $$(\texttt{Inheritance}\ \texttt{Bird}\ \texttt{Fly})\ \measeq\ \STV{0.9}{0.99}$$
@@ -615,11 +615,11 @@ derived from iteratively applying induction and revision, and reflects
 the formula of extensional inheritance/implication given in Section
 2.4.1 \emph{The Semantics of Inheritance} of the PLN book, at least
 the strength part.  To obtain the confidence part we assume that the
-second order distribution is a Beta distribution, like in the Section
+second order distribution is a beta distribution, like in the Section
 4.2 \emph{From Imprecise Probabilities to Indefinite Probabilities} of
-the PLN book.  In order to derive a Beta distribution as second order
+the PLN book.  In order to derive a beta distribution as second order
 distribution we can assume an underlying Bernoulli process with
-parameter $p$ with a Beta distribution as prior.  The Jeffreys prior
+parameter $p$ with a beta distribution as prior.  The Jeffreys prior
 where $\alpha=\beta=\frac{1}{2}$ is often the default choice.  Given
 the PLN statement
 $$P \limp Q$$ Let us express its truth value as the posterior
@@ -628,6 +628,14 @@ In order to map a Bernoulli process onto an implication we zoom-in to
 the data points where $P$ is true.
 
 NEXT
+
+\subsection{Priors}
+Typical priors for the beta distribution includes
+\begin{itemize}
+\item Haldane prior: $\alpha=\beta=0$
+\item Jeffreys prior: $\alpha=\beta=\frac{1}{2}$
+\item Bayes prior: $\alpha=\beta=1$
+\end{itemize}
 
 \section{conclusion}
 
