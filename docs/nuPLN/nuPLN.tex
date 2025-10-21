@@ -639,7 +639,26 @@ Typical priors for the beta distribution includes
 
 \section{Other Inference Rules}
 
-NEXT: add truth value formula about $A \to C, B \to C \vdash A \land B \to C$
+\subsection{Implicant Conjunction Introduction}
+$$A \to C, B \to C \vdash A \land B \to C$$
+Let us assume that
+\begin{enumerate}
+\item $A$ and $B$ are globally independent,
+\item $A$ and $B$ are independent on $C$.
+\end{enumerate}
+
+According Bayes' formula
+$$P(C|A,B) = \frac{P(A,B|C) \times P(C)}{P(A,B)}$$
+Because of assumption 1 and 2 we can derive
+$$P(C|A,B) = \frac{P(A|C) \times P(B|C) \times P(C)}{P(A) \times P(B)}$$
+Further more, according to Bayes' formula
+$$P(A|C) = \frac{P(C|A) \times P(A)}{P(C)}$$
+$$P(B|C) = \frac{P(C|B) \times P(B)}{P(C)}$$
+Therefore
+$$P(C|A,B) = \frac{\frac{P(C|A) \times P(A)}{P(C)} \times \frac{P(C|B)
+    \times P(B)}{P(C)} \times P(C)}{P(A) \times P(B)}$$
+which simplified into
+$$P(C|A,B) = \frac{P(C|A) \times P(C|B)}{P(C)}$$
 
 \section{conclusion}
 
