@@ -638,6 +638,135 @@ Typical priors for the beta distribution includes
 \end{itemize}
 
 \section{Other Inference Rules}
+\subsection{Conjunction Introduction}
+Given $A \measeq TV_A$ and $B \measeq TV_B$ infer $A \land B \measeq
+TV_{A\land B}$.  For that we are going to describe the CDF of
+$TV_{A\land B}$ as it would be obtained by averaging over all possible
+combinations of $A$ and $B$.
+Let us start with the discrete case, where
+\begin{itemize}
+\item $n$ is the size of the universe,
+\item $a$ is the size of $A$,
+\item $b$ is the size of $B$,
+\item $k$ is the size of $A \land B$,
+\item $n-a$ is the size of the complement of $A$,
+\item $b-k$ is the size of $B\setminus A$.
+\end{itemize}
+Without loss of generality we can fix $A$ and study the various ways
+the elements of $B$ interest with $A$ such that $|A \land B|=k$
+\begin{itemize}
+\item $C_k^a$ is the number of ways of placing the elements of
+  $A \land B$ within $A$,
+\item $C_{b-k}^{n-a}$ is the number of ways of placing the
+  elements of $B\setminus A$ within the complement of $A$,
+\item $C_b^n$ is the number of ways of placing the elements of $B$.
+\end{itemize}
+Thus the probability of $|A\land B|=k$
+$$Pr(|A\land B|=k) = \frac{C_k^a \times C_{b-k}^{n-a}}{C_b^n}$$
+Therefore the cumulative probability of $|A\land B|\leq k$ is
+$$Pr(|A\land B|\leq k) = \sum_{i=0}^k \frac{C_i^a \times
+  C_{b-i}^{n-a}}{C_b^n}$$
+$$Pr(|A\land B|\leq k) = \sum_{i=0}^k \frac{\frac{a!}{i!\times (a-i)!} \times
+  \frac{(n-a)!}{(b-i)!\times ((n-a) - (b-i))!}}{\frac{n!}{b!\times (n-b)!}}$$
+$$Pr(|A\land B|\leq k) = \sum_{i=0}^k \frac{\frac{a!}{i!\times (a-i)!} \times
+  \frac{(n-a)!}{(b-i)!\times (n-a-b+i)!}}{\frac{n!}{b!\times (n-b)!}}$$
+Let us first think of the simpler case where $a=b$
+$$Pr(|A\land B|\leq k) = \sum_{i=0}^k \frac{\frac{a!}{i!\times (a-i)!} \times
+  \frac{(n-a)!}{(a-i)!\times (n-2\times a+i)!}}{\frac{n!}{a!\times (n-a)!}}$$
+$$Pr(|A\land B|\leq k) = \sum_{i=0}^k
+  \frac{a!}{i!\times (a-i)!} \times \frac{(n-a)!}{(a-i)!\times
+      (n-2\times a+i)!} \times \frac{a!\times (n-a)!}{n!}$$
+$$Pr(|A\land B|\leq k) = \sum_{i=0}^k
+  \frac{a!^2 \times (n-a)!^2}{i! \times (a-i)!^2 \times
+    (n-2\times a+i)! \times n!}$$
+Let us simplify even further by assuming $a=\frac{n}{2}$
+$$Pr(|A\land B|\leq k) = \sum_{i=0}^k
+  \frac{\left (\frac{n}{2}\right )!^2 \times \left (\frac{n}{2} \right
+    )!^2}{i! \times \left (\frac{n}{2}-i \right )!^2 \times
+    \left (n-2\times \frac{n}{2}+i \right )! \times n!}$$
+$$Pr(|A\land B|\leq k) = \sum_{i=0}^k
+  \frac{\left (\frac{n}{2}\right )!^4}{i! \times \left (\frac{n}{2}-i \right )!^2 \times
+    i! \times n!}$$
+$$Pr(|A\land B|\leq k) = \sum_{i=0}^k
+  \frac{\left (\frac{n}{2}\right )!^4}{i!^2 \times \left
+    (\frac{n}{2}-i \right )!^2 \times n!}$$
+
+  Stirling approximation [DeepSeek Alert BEGIN]
+\[ n! \approx \sqrt{2\pi n} \left( \frac{n}{e} \right)^n \]
+  First, approximate \(\left( \frac{n}{2}! \right)^2\):
+
+\[ \left( \frac{n}{2}! \right) \approx \sqrt{2\pi \frac{n}{2}} \left(
+\frac{\frac{n}{2}}{e} \right)^{\frac{n}{2}} \]
+
+Squaring both sides:
+
+\[ \left( \frac{n}{2}! \right)^2 \approx 2\pi \frac{n}{2} \cdot \left(
+\frac{n}{2e} \right)^n = \pi n \cdot \left( \frac{n}{2e} \right)^n \]
+
+Next, approximate \(n!\) using Stirling's formula:
+
+\[ n! \approx \sqrt{2\pi n} \left( \frac{n}{e} \right)^n \]
+
+Now, consider the ratio:
+
+\[ \frac{\left( \frac{n}{2}! \right)^2}{n!} \approx \frac{\pi n \cdot
+\left( \frac{n}{2e} \right)^n}{\sqrt{2\pi n} \left( \frac{n}{e}
+\right)^n} \]
+
+Simplify the expression:
+
+\[ = \frac{\pi n}{\sqrt{2\pi n}} \cdot \left( \frac{n}{2e} \right)^n /
+\left( \frac{n}{e} \right)^n \] \[ = \sqrt{\frac{\pi n}{2}} \cdot
+\left( \frac{1}{2^n} \right) \]
+
+As \(n\) grows large, the term \(2^n\) grows exponentially, while
+\(\sqrt{\frac{\pi n}{2}}\) grows polynomially. Therefore, the ratio
+tends to zero as \(n\) approaches infinity.
+[DeepSeek Alert END]
+
+Let us attempt to define the continuous case
+by studying the limit of the discrete case where $n$ tends to
+$+\infty$.  First let us reformulate the discrete case in terms of
+probabilities of $A$ and $B$.  Let us define the following
+probabilities
+\begin{itemize}
+\item $p_A = \frac{a}{n}$ is the probability of $A$, therefore $a =
+  p_A\times n$,
+\item $p_B = \frac{b}{n}$ is the probability of $B$, therefore $b =
+  p_B \times n$,
+\item $x = \frac{k}{n}$ is the threshold cumulative probability of
+  $A\land B$, therefore $k = x\times n$,
+\item $p_{AB} = \frac{i}{n}$ is the probability of $A\land B$,
+  therefore $i = p_{AB}\times n$,
+\item $p_{\overline{A}} = 1-p_A = \frac{n-a}{n}$ is the probability of
+  the complement of $A$, therefore $n-a=(1-p_A)\times n$,
+\item $p_{B\setminus A} = p_B - p_{AB} = \frac{b-i}{n}$ is the
+  probability of $B\setminus A$, therefore $b-i=(p_B - p_{AB})\times n$.
+\end{itemize}
+Then the cumulative probability of $|A\land B|\leq k$ can be
+reformulated as
+$$Pr\left (\frac{|A\land B|}{n}\leq x\right ) = \sum_{i=0}^{x\times n} \frac{C_{i}^{p_A\times n} \times
+  C_{p_B\times n - i}^{(1-p_A)\times n}}{C_{p_B \times n}^n}$$
+$$Pr(p_{AB} \leq x) = \sum_{i=0}^{x\times n} \frac{C_{i}^{p_A\times n} \times
+  C_{p_B\times n - i}^{(1-p_A)\times n}}{C_{p_B \times n}^n}$$
+$$Pr(p_{AB} \leq x) = \sum_{i=0}^{x\times n} \frac{\frac{(p_A\times
+    n)!}{i!\times (p_A\times n -i)!} \times \frac{((1-p_A)\times n)!}{(p_B\times n -
+    i)!\times (((1-p_A)\times n) - (p_B\times n -
+    i))!}}{\frac{n!}{(p_B \times n)!\times (n - (p_B \times n))!}}$$
+$$Pr(p_{AB} \leq x) = \lim_{n\to +\infty} \sum_{i=0}^{x\times n} \frac{\frac{(p_A\times
+    n)!}{i!\times (p_A\times n -i)!} \times \frac{((1-p_A)\times n)!}{(p_B\times n -
+    i)!\times (((1-p_A)\times n) - (p_B\times n -
+    i))!}}{\frac{n!}{(p_B \times n)!\times (n - (p_B \times n))!}}$$
+$$Pr(p_{AB} \leq x) =$$
+$$\lim_{n\to +\infty} \sum_{i=0}^{x\times n} \frac{(p_A\times
+    n)!}{i!\times (p_A\times n -i)!} \times \frac{((1-p_A)\times n)!}{(p_B\times n -
+    i)!\times (((1-p_A)\times n) - (p_B\times n -
+    i))!}
+\times \frac{(p_B \times n)!\times (n - (p_B \times n))!}{n!}$$
+
+NEXT: use Stirling (or other see Bibliography/Mathematics)
+approximation to define a Riemman sum and turn it into integral
+https://study.com/skill/learn/rewriting-the-limit-of-a-riemann-sum-as-a-definite-integral-explanation.html
 
 \subsection{Implicant Conjunction Introduction}
 $$A \to C, B \to C \vdash A \land B \to C$$
@@ -646,7 +775,6 @@ Let us assume that
 \item $A$ and $B$ are globally independent,
 \item $A$ and $B$ are independent on $C$.
 \end{enumerate}
-
 According Bayes' formula
 $$P(C|A,B) = \frac{P(A,B|C) \times P(C)}{P(A,B)}$$
 Because of assumption 1 and 2 we can derive
@@ -657,7 +785,7 @@ $$P(B|C) = \frac{P(C|B) \times P(B)}{P(C)}$$
 Therefore
 $$P(C|A,B) = \frac{\frac{P(C|A) \times P(A)}{P(C)} \times \frac{P(C|B)
     \times P(B)}{P(C)} \times P(C)}{P(A) \times P(B)}$$
-which simplified into
+which simplifies into
 $$P(C|A,B) = \frac{P(C|A) \times P(C|B)}{P(C)}$$
 
 \section{conclusion}
