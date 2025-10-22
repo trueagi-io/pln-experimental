@@ -56,6 +56,11 @@
 \newcommand{\Nat}{\mathbb{N}}
 \newcommand{\anymu}{\hat{\mu}}
 \newcommand{\anyomega}{\hat{\omega}}
+\newcommand{\stirling}[1]{\sqrt{2\pi#1} \left(\frac{#1}{e}\right)^{#1}}
+\newcommand{\stirnotpi}[1]{\sqrt{#1} \left(\frac{#1}{e}\right)^{#1}}
+\newcommand{\stirpart}[1]{\left(\frac{#1}{e}\right)^{#1}}
+\newcommand{\selfexp}[1]{#1^{#1}}
+\newcommand{\sqstir}[1]{2\pi#1 \left(\frac{#1}{e}\right)^{2#1}}
 
 \title{Towards a Complete Formalization of PLN\\
   \texttt{(DRAFT)}} \author{Nil Geisweiller}
@@ -767,6 +772,138 @@ $$\lim_{n\to +\infty} \sum_{i=0}^{x\times n} \frac{(p_A\times
 NEXT: use Stirling (or other see Bibliography/Mathematics)
 approximation to define a Riemman sum and turn it into integral
 https://study.com/skill/learn/rewriting-the-limit-of-a-riemann-sum-as-a-definite-integral-explanation.html
+
+Let us redo the Stirling approximation with the full expression
+$$Pr(p_{AB} \leq x)$$
+$$=\lim_{n\to +\infty} \sum_{i=0}^{n x} \frac{(n p_A)!}{i! (n p_A -
+  i)!} \times \frac{(n (1-p_A))!}{(n p_B - i)! (n (1-p_A) - n p_B + i)!}
+\times \frac{(n p_B)! (n (1 - p_B))!}{n!}$$
+Let us reform in 1 fraction
+$$=\lim_{n\to +\infty} \sum_{i=0}^{n x}
+\frac{(n p_A)! (n (1-p_A))! (n p_B)! (n (1 - p_B))!}
+     {i! (n p_A - i)! (n p_B - i)! (n (1-p_A) - n p_B + i)! n!}$$
+[SPECIALIZATION BEGIN] What if $p_A = p_B = \frac{1}{2}$
+$$=\lim_{n\to +\infty} \sum_{i=0}^{n x}
+\frac{\left(\frac{n}{2}\right)!^4}
+     {i!^2 \left(\frac{n}{2} - i\right)!^2 n!}$$
+[SPECIALIZATION END]\\
+Let us use $t = \frac{i}{n}$ instead of $i$, thus $i = n t$, and
+attempt to introduce $\delta t = \frac{1}{n}$.
+$$=\lim_{n\to +\infty} \sum_{t=0}^{x}
+\frac{(n p_A)! (n (1-p_A))! (n p_B)! (n (1 - p_B))!}
+     {(n t)! (n p_A - n t)! (n p_B - n t)! (n (1-p_A) - n p_B + n t)! n!}$$
+Let us factorize by $n$ whenever possible.
+$$=\lim_{n\to +\infty} \sum_{t=0}^{x}
+\frac{(n p_A)! (n (1-p_A))! (n p_B)! (n (1 - p_B))!}
+     {(n t)! (n (p_A - t))! (n (p_B - t))! (n (1 - p_A - p_B + t))!
+       n!}$$
+Let us use Stirling approximation (not indicating limit and sum to
+save space).
+{\tiny
+$$
+\frac{\stirling{n p_A} \stirling{(n (1-p_A))} \stirling{n p_B} \stirling{(n (1 - p_B))}}
+     {\stirling{n t} \stirling{(n (p_A - t))} \stirling{(n (p_B - t))} \stirling{(n (1 - p_A - p_B + t))}
+       \stirling{n}}$$
+     }
+Let us eliminate $\sqrt{2\pi n}$ in nominator and denominator  (not indicating limit and sum to
+save space).
+{\small
+$$
+\frac{\sqrt{p_A}\stirpart{n p_A} \sqrt{1 - p_A}\stirpart{n (1 - p_A)}
+      \sqrt{p_B}\stirpart{n p_B} \sqrt{1 - p_B}\stirpart{n (1 - p_B)}}
+     {\sqrt{t}\stirpart{n t} \sqrt{p_A - t}\stirpart{n (p_A - t)}
+      \sqrt{p_B - t}\stirpart{n (p_B - t)} \sqrt{1 - p_A - p_B +
+        t}\stirpart{n (1 - p_A - p_B + t)} \stirling{n}}$$
+     }
+On the numerator the exponents sum up to
+$$n p_A + n(1 - P_A) + n p_B + n (1 - p_B) = n p_A + n - n p_A + n p_B
++ n - n p_B = 2n$$
+On the denominator the exponents sum up to
+$$n t + n (p_A - t) + n (p_B - t) + n (1 - p_A - p_B + t) + n = n t +
+n p_A - n t + n p_B - n t + n - n p_A - n p_B + n t + n = 2n$$
+Therefore $e$ can be completely eliminated.
+$$
+\frac{\sqrt{p_A}\selfexp{n p_A} \sqrt{1 - p_A}\selfexp{n (1 - p_A)}
+      \sqrt{p_B}\selfexp{n p_B} \sqrt{1 - p_B}\selfexp{n (1 - p_B)}}
+     {\sqrt{t}\selfexp{n t} \sqrt{p_A - t}\selfexp{n (p_A - t)}
+      \sqrt{p_B - t}\selfexp{n (p_B - t)} \sqrt{1 - p_A - p_B +
+        t}\selfexp{n (1 - p_A - p_B + t)} \sqrt{2\pi n} n^n}$$
+There is a product of 4 $n$ in the numerator and in the denominator,
+they can therefore be eliminated.
+$$
+\frac{\sqrt{p_A}p_A^{n p_A} \sqrt{1 - p_A}(1 - p_A)^{n (1 - p_A)}
+      \sqrt{p_B}p_B^{n p_B} \sqrt{1 - p_B}(1 - p_B)^{n (1 - p_B)}}
+     {\sqrt{t}t^{n t} \sqrt{p_A - t}(p_A - t)^{n (p_A - t)}
+      \sqrt{p_B - t}(p_B - t)^{n (p_B - t)} \sqrt{1 - p_A - p_B +
+        t}(1 - p_A - p_B + t)^{n (1 - p_A - p_B + t)} \sqrt{2\pi n}
+      n^n}$$
+Let us move the square roots in the exponents.
+$$=\lim_{n\to +\infty} \sum_{t=0}^{x}
+\frac{p_A^{n p_A + \frac{1}{2}} (1 - p_A)^{n (1 - p_A) + \frac{1}{2}}
+      p_B^{n p_B + \frac{1}{2}} (1 - p_B)^{n (1 - p_B) + \frac{1}{2}}}
+     {t^{n t + \frac{1}{2}} (p_A - t)^{n (p_A - t) + \frac{1}{2}}
+      (p_B - t)^{n (p_B - t) + \frac{1}{2}} (1 - p_A - p_B + t)^{n (1
+         - p_A - p_B + t) + \frac{1}{2}} \sqrt{2\pi} n^{n +
+         \frac{1}{2}}}$$
+[SPECIALIZATION BEGIN]
+What if $p_A = p_B = \frac{1}{2}$?
+$$=\lim_{n\to +\infty} \sum_{t=0}^{x}
+\frac{\left(\frac{1}{2}\right)^{2 n + 2}}
+     {t^{2 n t + 1} \left(\frac{1}{2} - t\right)^{n - 2 n t + 1}
+      \sqrt{2\pi} n^{n + \frac{1}{2}}}$$
+[SPECIALIZATION END]\\
+     Let us exhibit $\delta t$ by borrowing an $n$ from $n^{n+\frac{1}{2}}$
+$$=\lim_{n\to +\infty} \sum_{t=0}^{x}
+\frac{p_A^{n p_A + \frac{1}{2}} (1 - p_A)^{n (1 - p_A) + \frac{1}{2}}
+      p_B^{n p_B + \frac{1}{2}} (1 - p_B)^{n (1 - p_B) + \frac{1}{2}}}
+     {t^{n t + \frac{1}{2}} (p_A - t)^{n (p_A - t) + \frac{1}{2}}
+      (p_B - t)^{n (p_B - t) + \frac{1}{2}} (1 - p_A - p_B + t)^{n (1
+         - p_A - p_B + t) + \frac{1}{2}} \sqrt{2\pi} n^{n -
+         \frac{1}{2}}} \delta t$$
+Let us express exponents as sums
+$$=\lim_{n\to +\infty} \sum_{t=0}^{x}
+\frac{p_A^{n p_A + \frac{1}{2}} (1 - p_A)^{n - n p_A + \frac{1}{2}}
+      p_B^{n p_B + \frac{1}{2}} (1 - p_B)^{n - n p_B + \frac{1}{2}}}
+     {t^{n t + \frac{1}{2}} (p_A - t)^{n p_A - n t + \frac{1}{2}}
+      (p_B - t)^{n p_B - n t + \frac{1}{2}} (1 - p_A - p_B + t)^{n - n
+         p_A - n p_B + n t + \frac{1}{2}} \sqrt{2\pi} n^{n -
+         \frac{1}{2}}} \delta t$$
+Let us turn exponent sums into products of exponents (removing limit,
+sum and moving component to the numerator or denominator so that its
+exponent is positive).
+{\tiny
+$$
+\frac{p_A^{n p_A} p_A^{\frac{1}{2}} (1 - p_A)^{n} (p_A - t)^{n t} (1 -
+  p_A - p_B + t)^{n p_A} (1 - p_A)^{\frac{1}{2}}
+      p_B^{n p_B} p_B^{\frac{1}{2}} (1 - p_B)^{n} (p_B - t)^{n t} (1 -
+      p_A - p_B + t)^{n p_B} (1 - p_B)^{\frac{1}{2}}}
+     {t^{n t} t^{\frac{1}{2}} (1 - p_A)^{n p_A} (p_A - t)^{n p_A} (p_A - t)^{\frac{1}{2}}
+      (1 - p_B)^{n p_B} (p_B - t)^{n p_B} (p_B - t)^{\frac{1}{2}} (1 - p_A - p_B + t)^{n} (1 - p_A - p_B + t)^{n t} (1 - p_A - p_B + t)^{\frac{1}{2}} \sqrt{2\pi} n^{n}
+       n^{-\frac{1}{2}}} \delta t$$
+}
+Let us group coefficients by their exponents.
+{\tiny
+$$
+\left(\frac{p_A (1 - p_A) p_B (1 - p_B) n}{t (p_A - t) (p_B - t) (1 -
+  p_A - p_B + t)}\right)^{\frac{1}{2}} \times
+\left(\frac{(1 - p_A) (1 - p_B)}{n (1 - p_A - p_B + t)}\right)^{n}
+\times
+\left(\frac{p_A (1-p_A-p_B+t)}{(1-p_A)(p_A-t)}\right)^{n p_A} \times
+\left(\frac{p_B (1-p_A-p_B+t)}{(1-p_B)(p_B-t)}\right)^{n p_B} \times
+\left(\frac{(p_A - t) (p_B - t)}{t(1 - p_A - p_B + t)}\right)^{n t} \times
+\frac{1}
+     {\sqrt{2\pi}} \delta t$$}
+%% Turn the Riemman sum into an integral
+%% $$=\int_0^x f(t)dt$$
+
+[DeepSeek ALERT BEGIN]
+
+$$
+\int_{0}^{x} \frac{p_A^{p_A} (1 - p_A)^{1 - p_A} p_B^{p_B}
+(1 - p_B)^{1 - p_B}}{t^{t} (p_A - t)^{p_A - t} (p_B - t)^{p_B - t} (1 - p_A - p_B + t)^{1 - p_A - p_B + t} \sqrt{2\pi}} dt
+$$
+
+[DeepSeek ALERT END]
 
 \subsection{Implicant Conjunction Introduction}
 $$A \to C, B \to C \vdash A \land B \to C$$
