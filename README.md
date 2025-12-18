@@ -1,12 +1,15 @@
-# PLN for Hyperon
+# Experimental PLN for Hyperon
 
 ## Description
 
-Port of Probabilistic Logic Networs (PLN) for Hyperon/MeTTa.
+This repository contains a number of experiments about Probabilistic
+Logic Networs (PLN).  For a more production-ready version one may go
+to the [PLN repository](https://github.com/trueagi-io/PLN) instead.
 
 ## Prerequisites
 
 - [hyperon-experimental](https://github.com/trueagi-io/hyperon-experimental)
+- [Maxima](https://maxima.sourceforge.io/)
 
 ## Usage
 
@@ -64,13 +67,6 @@ Or, using the URL of that Dockerfile:
 ```
 docker build -t trueagi/pln https://raw.githubusercontent.com/trueagi-io/hyperon-pln/main/Dockerfile
 ```
-
-## Idris
-
-There is also some Idris code under the `idris` folder to prototype
-some aspect of the dependent types port.  This is sometimes easier
-because Idris is more mature than MeTTa.  The minimum requirement is
-Idris2 version 0.5.1.
 
 ## References
 
