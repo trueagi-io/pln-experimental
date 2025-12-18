@@ -1,76 +1,31 @@
-# PLN for Hyperon
+# Experimental PLN for Hyperon
 
-## Description
+## Overview
 
-Port of Probabilistic Logic Networs (PLN) for Hyperon/MeTTa.
+This repository contains a number of experiments about Probabilistic
+Logic Networs (PLN).  For a more production-ready version one may go
+to the [PLN repository](https://github.com/trueagi-io/PLN) instead.
 
 ## Prerequisites
 
 - [hyperon-experimental](https://github.com/trueagi-io/hyperon-experimental)
+- [Maxima](https://maxima.sourceforge.io/)
 
-## Usage
+## Description
 
-The port is approached from different angles which are
+There are two main subfolders
 
-- Proofs as match queries
-- Proofs as custom Atom structure
-- Proofs as programs, and properties as dependent types
-
-### PLN via Dependent Types
-
-The most advanced approach for now is via dependent types and can be
-found under
-
-```
-metta/dependent-types
-```
-
-The following examples can be run
-
-```
-metta metta/dependent-types/DeductionDTLTest.metta
-metta metta/dependent-types/ImplicationDirectIntroductionDTLTest.metta
-metta metta/dependent-types/DeductionImplicationDirectIntroductionDTLTest.metta
-```
-
-### Synthesizer
-
-The dependent type approach relies on a generic program synthesizer
-that can be found under
-
-```
-metta/synthesis
-```
-
-More information can be found in the `README.md` file under that
-directory.
-
-## Docker
-
-A docker image containing a pre-installed version of Hyperon and PLN
-is hosted on Docker Hub and can be run as follows:
-```
-docker run --rm -ti trueagi/pln
-```
-
-Additionally, a Dockerfile to build and update that image is present
-under the root folder of that repository.  To build the image from
-that local file, one may invoke the following command:
-```
-docker build -t trueagi/pln .
-```
-
-Or, using the URL of that Dockerfile:
-```
-docker build -t trueagi/pln https://raw.githubusercontent.com/trueagi-io/hyperon-pln/main/Dockerfile
-```
-
-## Idris
-
-There is also some Idris code under the `idris` folder to prototype
-some aspect of the dependent types port.  This is sometimes easier
-because Idris is more mature than MeTTa.  The minimum requirement is
-Idris2 version 0.5.1.
+- [docs](docs) containing various writings about PLN including
+  - Manuscript meant to provide complete mathematical foundations of
+    PLN using a global universal distribution, [nuPLN](docs/nuPLN).
+  - Descriptions of [use cases](docs/use-cases) of PLN such as
+    [next-token-prediction](docs/use-cases/next-token-prediction)
+    experiments.
+  - [Random notes](docs/pln-random-notes.txt) taken during
+    brainstorming sessions.
+- [experimental](experimental) containing various experiments
+  regarding PLN chaining and truth value formula calculations, further
+  detailed in a [README.md](experimental/README.md) file under it.
 
 ## References
 

@@ -1,0 +1,387 @@
+/* Load packages */
+load(draw)$ /* draw2d */
+load(distrib)$ /* pdf_beta, etc */
+load(descriptive)$ /* histogram, mean, var */
+load(stringproc)$ /* printf */
+
+/* Only retain given decimals after point */
+round_dec(x, d) := float(round(x*(10^d))/(10^d));
+
+/* Convert strength and confidence into alpha and beta */
+count_to_confidence(c) := c / (c + 1);
+confidence_to_count(c) := c / (1 - c);
+stv_to_alpha(strength, confidence) := block([cnt, pc, prior_alpha], cnt: confidence_to_count(confidence), pc: strength*cnt, prior_alpha: 1, prior_alpha + pc);
+stv_to_beta(strength, confidence) := block([cnt, nc, prior_beta], cnt: confidence_to_count(confidence), nc: (1-strength)*c, prior_alpha: 1, prior_alpha + nc);
+
+/* Big float precision */
+fpprec:51;
+
+/* Specify various ranges
+- Basic -
+0 <= pa <= 1
+0 <= pb <= 1
+0 <= max(pa+pb-1, 0) <= x <= min(pa, pb) <= 1
+- Derived -
+0 <= 1-pa <= 1
+0 <= 1-pb <= 1
+-1 <= max(-pa, -pb) <= -x <= max(1-pa-pb, 0) <= 0
+pa-1 <= max(0, pa-pb) <= pa-x <= max(1-pb, pa) <= pa
+pb-1 <= max(pb-pa, 0) <= pb-x <= max(1-pa, pb) <= pb
+1-pb-pa <= max(0, 1-pb-pa) <= x-pb-pa+1 <= min(1-pb, 1-pa) <= 2-pb-pa
+*/
+
+/* Calculate lower and upper bounds of x w.r.t. pa and pb */
+lower(pa, pb) := max(pa+pb-1, 0);
+upper(pa, pb) := min(pa, pb);
+dst(pa, pb) := upper(pa, pb) - lower(pa, pb);
+lower(bfloat(0.8), bfloat(0.8));
+upper(0.8, 0.8);
+
+/* Uniform distribution between lower to upper */
+pdf_unilu(x, pa, pb) := if (x < lower(pa, pb) or upper(pa, pb) < x) then 0 else 1 / dst(pa, pb);
+
+/* Scale x in [0,1] to [lower(pa, pb), upper(pa, pb)], and vice versa. */
+scale(x, pa, pb) := x*dst(pa, pb) + lower(pa, pb);
+scale(0.5, 0.8, 0.8); /* should return 0.7 */
+iscale(x, pa, pb) := (x - lower(pa, pb)) / dst(pa, pb);
+iscale(0.7, 0.8, 0.8); /* should return 0.5 */
+
+/* Pdf of Scaled beta distribution so that it is squeezed within the
+lower and upper bound defined by pa and pb. */
+pdf_scaled_beta(x, alpha, beta, pa, pb) := if (x < lower(pa, pb) or upper(pa, pb) < x) then 0 else pdf_beta(iscale(x, pa, pb), alpha, beta) / dst(pa, pb);
+pdf_scaled_beta(0.7, 1, 1, 0.8, 0.8);
+
+/* Attempt to solve a few inequalities */
+load(to_poly_solve)$
+fourier_elim([0 <= pa, pa <= 1, 0 <= pb, pb <= 1], [pa, pb]);
+
+/* Define probability of |A ∧ B| = k using combinations */
+cpr(n, a, b, k) := binomial(a, k) * binomial(n - a, b -k) / binomial(n, b);
+float(cpr(100, 80, 20, 10));
+
+/* Like cpr but uses probabilities for A, B and |A ∧ B| instead of cardinality */
+pcpr(n, pa, pb, x) := binomial(n*pa, n*x) * binomial(n*(1 - pa), n*(pb - x)) / binomial(n, n*pb);
+pcpr(70, 0.8, 0.2, 0.1);
+/* limit(pcpr(n, 08, 0.2, 0.1), n, inf); */
+
+/* Like cpr but uses factorials instead */
+fpr(n, pa, pb, x) := (factorial(n*pa) * factorial(n*(1-pa)) * factorial(n*pb) * factorial(n*(1-pb))) / (factorial(n*x) * factorial(n*(pa-x)) * factorial(n*(pb-x)) * factorial(n*(1-pa-pb+x)) * factorial(n));
+fpr(70, 0.8, 0.2, 0.1);
+/* limit(fpr(n, 0.8, 0.2, 0.1), n, inf); */
+
+/* Like fpcpr but uses gamma function instead */
+gpr(n, pa, pb, x) := (gamma(n*pa + 1) * gamma(n*(1-pa) + 1) * gamma(n*pb + 1) * gamma(n*(1-pb) + 1)) / (gamma(n*x + 1) * gamma(n*(pa-x) + 1) * gamma(n*(pb-x) + 1) * gamma(n*(1-pa-pb+x) + 1) * gamma(n + 1));
+gpr(70, 0.8, 0.2, 0.1);
+/* limit(g(n, 0.8, 0.2, 0.1), n, inf); */
+
+/* Define Stirling approximation */
+stirling(n) := sqrt(2*%pi*n)*(n/%e)**n;
+float(stirling(70));
+
+/* Like gpcpr but uses Stirling approximation */
+stpr(n, pa, pb, x) := (stirling(n*pa) * stirling(n*(1-pa)) * stirling(n*pb) * stirling(n*(1-pb))) / (stirling(n*x) * stirling(n*(pa-x)) * stirling(n*(pb-x)) * stirling(n*(1-pa-pb+x)) * stirling(n));
+float(stpr(70, 0.8, 0.2, 0.1));
+
+/* Simplify Stirling approximation, remove any factors that may cancel out */
+/* simp_stirling(n) := sqrt(n)*(n/%e)**n; */
+simp_stirling(n) := sqrt(n)*n**n;
+
+/* Like st but uses simp_stirling */
+sstpr(n, pa, pb, x) := (simp_stirling(n*pa) * simp_stirling(n*(1-pa)) * simp_stirling(n*pb) * simp_stirling(n*(1-pb))) / (simp_stirling(n*x) * simp_stirling(n*(pa-x)) * simp_stirling(n*(pb-x)) * simp_stirling(n*(1-pa-pb+x)) * simp_stirling(n) * sqrt(2*%pi));
+float(sstpr(70, 0.8, 0.2, 0.1));
+
+/* Manually simplified s1 */
+mstpr(n, pa, pb, x) := (pa**((2*n*pa+1)/2) * pb**((2*n*pb+1)/2) * (pa-x)**((2*n*x-2*n*pa-1)/2) * (pb-x)**((2*n*x-2*n*pb-1)/2)) / (sqrt(2)*sqrt(%pi)*sqrt(n)*(1-pa)**((2*n*pa-2*n-1)/2) * (1-pb)**((2*n*pb-2*n-1)/2) * x**((2*n*x+1)/2) * (x-pb-pa+1)**((2*n*x-2*n*pb-2*n*pa+2*n+1)/2));
+/* Like above but distribute 1/2 inside powers */
+mstpr(n, pa, pb, x) := (pa**(n*pa+1/2) * pb**(n*pb+1/2) * (pa-x)**(n*x-n*pa-1/2) * (pb-x)**(n*x-n*pb-1/2)) / (sqrt(2)*sqrt(%pi)*sqrt(n)*(1-pa)**(n*pa-n-1/2) * (1-pb)**(n*pb-n-1/2) * x**(n*x+1/2) * (x-pb-pa+1)**(n*x-n*pb-n*pa+n+1/2));
+/* Like above but factorize by n inside powers */
+mstpr(n, pa, pb, x) := (pa**(n*pa+1/2) * pb**(n*pb+1/2) * (pa-x)**(n*(x-pa)-1/2) * (pb-x)**(n*(x-pb)-1/2)) / (sqrt(2)*sqrt(%pi)*sqrt(n)*(1-pa)**(n*(pa-1)-1/2) * (1-pb)**(n*(pb-1)-1/2) * x**(n*x+1/2) * (x-pb-pa+1)**(n*(x-pb-pa+1)+1/2));
+/* Like above but factorize by n inside powers all the way */
+mstpr(n, pa, pb, x) := (pa**(n*(pa+1/(2*n))) * pb**(n*(pb+1/(2*n))) * (pa-x)**(n*(x-pa-1/(2*n))) * (pb-x)**(n*(x-pb-1/(2*n)))) / (sqrt(2)*sqrt(%pi)*sqrt(n)*(1-pa)**(n*(pa-1-1/(2*n))) * (1-pb)**(n*(pb-1-1/(2*n))) * x**(n*(x+1/(2*n))) * (x-pb-pa+1)**(n*(x-pb-pa+1+1/(2*n))));
+/* Like above but move the factorized n inside powers one level up */
+mstpr(n, pa, pb, x) := 1/(sqrt(2)*sqrt(%pi)*sqrt(n)) * ((pa**(pa+1/(2*n)) * pb**(pb+1/(2*n)) * (pa-x)**(x-pa-1/(2*n)) * (pb-x)**(x-pb-1/(2*n))) / ((1-pa)**(pa-1-1/(2*n)) * (1-pb)**(pb-1-1/(2*n)) * x**(x+1/(2*n)) * (x-pb-pa+1)**(x-pb-pa+1+1/(2*n))))**n;
+/* Like above but uniformize signs inside the powers */
+mstpr(n, pa, pb, x) := 1/(sqrt(2)*sqrt(%pi)*sqrt(n)) * ((pa**(pa+1/(2*n)) * pb**(pb+1/(2*n)) * (1-pa)**(1-pa+1/(2*n)) * (1-pb)**(1-pb+1/(2*n))) / ((pa-x)**(pa-x+1/(2*n)) * (pb-x)**(pb-x+1/(2*n)) * x**(x+1/(2*n)) * (x-pb-pa+1)**(x-pb-pa+1+1/(2*n))))**n;
+/* Like above but move the square root factor inside the outer power of n */
+mstpr(n, pa, pb, x) := 1/(sqrt(2*%pi)) * ((pa**(pa+1/(2*n)) * pb**(pb+1/(2*n)) * (1-pa)**(1-pa+1/(2*n)) * (1-pb)**(1-pb+1/(2*n))) / (n**(1/(2*n)) * (pa-x)**(pa-x+1/(2*n)) * (pb-x)**(pb-x+1/(2*n)) * x**(x+1/(2*n)) * (x-pb-pa+1)**(x-pb-pa+1+1/(2*n))))**n;
+/* Like above but take all 1/(2*n) powers outside of the outer n power */
+/* Tip: manually copy/paste to the maxima buffer for best rendering */
+mstpr(n, pa, pb, x) := (sqrt(pa*pb*(1-pa)*(1-pb)) / (sqrt(2*%pi*n*(pa-x)*(pb-x)*x*(x-pb-pa+1)))) * ((pa**pa * pb**pb * (1-pa)**(1-pa) * (1-pb)**(1-pb)) / ((pa-x)**(pa-x) * (pb-x)**(pb-x) * x**x * (x-pb-pa+1)**(x-pb-pa+1)))**n;
+float(mstpr(70, 0.8, 0.2, 0.1));
+
+/* Like gpr and mstpr but pad with zero outside of valid x range */
+declare(epsilon, constant);
+epsilon: 1e-3;
+padded_gpr(n, pa, pb, x) := if x <= (lower(pa, pb) + epsilon) or (upper(pa, pb) - epsilon) <= x then 0.0 else float(gpr(n, pa, pb, x));
+padded_mstpr(n, pa, pb, x) := if x <= (lower(pa, pb) + epsilon) or (upper(pa, pb) - epsilon) <= x then 0.0 else float(mstpr(n, pa, pb, x));
+
+/* Derive limit of mstpr */
+limit(mstpr(n, pa, pb, x), n, inf);
+
+/* Derive limit of n^(1/(2*n)) (it tends to 1) */
+limit(n**(1/(2*n)), n, inf);
+
+/* Attempt to derive the limit of Pr(P_AB <= 0.2) */
+/* limit(sum(g(n, 0.8, 0.2, i/n), i, 0, n*0.2), n, inf); */
+
+/* Calculate the mean of a Riemann sum given a unary function of index and its range */
+riemann_sum_mean(f, l, u) := sum(i*f(i), i, l, u) / (u - l);
+
+/* Calculate the variance of a Riemann sum */
+riemann_sum_variance(f, l, u) := block([r, m], r: u - l, m: riemann_sum_mean(f, l, u), sum(f(i)*(i/r - m)**2, i, l, u) / r);
+
+/* Test Riemann sum mean and variance */
+rmstpr_50(i) := float(padded_mstpr(50, 0.5, 0.5, i/50));
+rmstpr_100(i) := float(padded_mstpr(100, 0.5, 0.5, i/100));
+rmstpr_200(i) := float(padded_mstpr(200, 0.5, 0.5, i/200));
+rmstpr_400(i) := bfloat(padded_mstpr(bfloat(400), bfloat(0.5), bfloat(0.5), bfloat(i/400)));
+rmstpr_800(i) := bfloat(padded_mstpr(bfloat(800), bfloat(0.5), bfloat(0.5), bfloat(i/800)));
+riemann_sum_mean(rmstpr_50, 0, 50);
+riemann_sum_variance(rmstpr_50, 0, 50);
+riemann_sum_mean(rmstpr_100, 0, 100);
+riemann_sum_variance(rmstpr_100, 0, 100);
+riemann_sum_mean(rmstpr_200, 0, 200);
+riemann_sum_variance(rmstpr_200, 0, 200);
+riemann_sum_mean(rmstpr_400, 0, 400);
+riemann_sum_variance(rmstpr_400, 0, 400);
+riemann_sum_mean(rmstpr_800, 0, 800);
+riemann_sum_variance(rmstpr_800, 0, 800);
+
+/* Calculate alpha and beta parameters of a fitting unscaled beta
+distribution given the empirical mean and variance of another
+distribution.  Return -1 if precondition is not met. */
+fit_alpha(m, v) := float(if v < m*(1-m) then ((m*(1-m)/v)-1)*m else -1);
+fit_beta(m, v) := float(if v < m*(1-m) then ((m*(1-m)/v)-1)*(1-m) else -1);
+
+/* Fit alpha for mean=0.2528 and variance=1.3202e-5 obtained with padded_mstpr(70, 0.5, 0.5, i/70)
+fit_alpha(0.16055, 4.834e-6); /* outputs 4476 */
+fit_beta(0.16055, 4.834e-6); /* outputs 23403 */
+
+/* Calculate mean and variance of a beta distribution given its alpha
+and beta parameters. */
+beta_distr_mean(alpha, beta) := float(alpha / (alpha+beta));
+beta_distr_variance(alpha, beta) := float(alpha*beta / ((alpha+beta)**2 * (alpha+beta+1)));
+beta_distr_mean(4476, 23403); /* outputs 0.16055 */
+beta_distr_variance(4476, 23403); /* outputs 4.834e-6 */
+
+/* Calculate alpha and beta parameters of a fitting caled beta
+distribution given the empirical mean and variance of another
+distribution.  Return -1 if precondition is not met.  */
+fit_scaled_alpha(m, v, pa, pb) := NEXT
+fit_sclaed_beta(m, v, pa, pb) := NEXT
+fit_alpha(0.16055, 4.834e-6, 0.8, 0.2); /* outputs NEXT */
+fit_beta(0.16055, 4.834e-6, 0.8, 0.2); /* outputs NEXT */
+
+/* Calculate mean and variance of a beta distribution given its alpha
+and beta parameters. */
+scaled_beta_distr_mean(alpha, beta, pa, pb) := NEXT
+scaled_beta_distr_variance(alpha, beta, pa, pb) := NEXT
+scaled_beta_distr_mean(NEXT, NEXT);
+scaled_beta_distr_variance(NEXT, NEXT);
+
+/* Draw Pr(P_AB <= x) using gamma form */
+draw2d(xrange = [0, 1], explicit(g(70, 0.8, 0.2, x), x, 0, 0.2));
+
+/* Draw Pr(P_AB <= x) using Stirling form */
+draw2d(xrange = [0, 1], explicit(padded_mstpr(70, 0.5, 0.5, x), x, 0, 1));
+
+/* Draw scaled beta distribution */
+draw2d(xrange = [0, 1], explicit(pdf_scaled_beta(x, 10, 5, 0.8, 0.8), x, 0, 1));
+
+/* Draw Pr(P_AB <= x) Stirling forms and unscaled beta fit */
+draw2d(xrange = [0, 1], color=red, explicit(padded_mstpr(70, 0.8, 0.2, x), x, 0, 1), color=green, explicit(pdf_beta(x, 44*1.3, 234*1.3)/70, x, 0, 1));
+
+/* Draw Pr(P_AB <= x) using Stirling forms and beta fit (scaling) */
+draw2d(xrange = [0, 1], color=green, explicit(padded_mstpr(70, 0.8, 0.2, x), x, 0, 1), color=blue, explicit(pdf_scaled_beta(x, 10, 5, 0.8, 0.2), x, 0, 1));
+
+/* Draw Pr(P_AB <= x) using Stirling forms with different n */
+draw2d(title="Pr(p_{AB} <= x) with p_A=p_B=0.5 using Stirling approximation", xlabel="x", ylabel="density", xrange=[0, 1], color=green, key="n=50", explicit(padded_mstpr(50, 0.5, 0.5, x)*50, x, 0, 1), color=blue, key="n=100", explicit(padded_mstpr(100, 0.5, 0.5, x)*100, x, 0, 1), color=red, key="n=200", explicit(padded_mstpr(200, 0.5, 0.5, x)*200, x, 0, 1), color=purple, key="n=400", explicit(padded_mstpr(bfloat(400), bfloat(0.5), bfloat(0.5), x)*bfloat(400), x, bfloat(0), bfloat(1)));
+
+/* Draw Pr(P_AB <= x) using Stirling forms with different n, using gpr
+instead of mstpr */
+draw2d(title="Pr(p_{AB} <= x) with p_A=p_B=0.5 using 𝛤 functions", xlabel="x", ylabel="density", xrange=[0, 1], color=green, key="n=50", explicit(padded_gpr(50, 0.5, 0.5, x)*50, x, 0, 1), color=blue, key="n=100", explicit(padded_gpr(100, 0.5, 0.5, x)*100, x, 0, 1), color=red, key="n=200", explicit(padded_gpr(bfloat(200), bfloat(0.5), bfloat(0.5), x)*bfloat(200), x, 0, 1), color=purple, key="n=400", explicit(padded_gpr(bfloat(400), bfloat(0.5), bfloat(0.5), x)*bfloat(400), x, bfloat(0), bfloat(1)));
+
+/* Draw x^x */
+draw2d(xrange = [-1, 1], explicit(x**x, x, -1, 1));
+
+/* Draw beta distribution */
+draw2d(xrange = [0, 1], explicit(pdf_beta(x, 44, 234), x, 0, 1));
+
+/* Draw uniform distribution between lower and upper for different
+values of pa and pb */
+draw2d(title="Uniform distrolets within valid bounds for different values of pA and pB", xlabel="x", ylabel="density", xrange=[0,1], yrange=[0,21], key_pos=top_left, color=pink, key="pA=pB=0.1", explicit(pdf_unilu(x, 0.1, 0.1), x, 0, 1), color=blue, key="pA=pB=0.25", explicit(pdf_unilu(x, 0.25, 0.25), x, 0, 1), color=red, key="pA=pB=0.5", explicit(pdf_unilu(x, 0.5, 0.5), x, 0, 1), color=green, key="pA=pB=0.675", explicit(pdf_unilu(x, 0.675, 0.675), x, 0, 1), color=violet, key="pA=pB=0.8", explicit(pdf_unilu(x, 0.8, 0.8), x, 0, 1), color=orange, key="pA=pB=0.95", explicit(pdf_unilu(x, 0.95, 0.95), x, 0, 1), color=brown, key="pA=0.15,pB=0.6", explicit(pdf_unilu(x, 0.15, 0.6), x, 0, 1), color=grey, key="pA=0.4,pB=0.9", explicit(pdf_unilu(x, 0.4, 0.9), x, 0, 1));
+
+/* Simplfy simp_stpcpr (sort of) */
+radcan(sstpr(n, pa, pb, x));
+radcan(mstpr(n, pa, pb, x));
+expand(sqrt(2*%pi*n*(pa-x)*(pb-x)*x*(x-pb-pa+1)));
+expand((pa-x)*(pb-x)*x*(x-pb-pa+1));
+expand((sqrt(pa*pb*(1-pa)*(1-pb)) / (sqrt(2*%pi*n*(pa-x)*(pb-x)*x*(x-pb-pa+1)))))
+
+/* Study sums */
+float(sum(gpr(70, 0.8, 0.2, i/70), i, 0, 70*0.2));
+float(sum(sstpr(70, 0.8, 0.2, i/70), i, 1, 69*0.2));
+float(sum(padded_mstpr(70, 0.8, 0.2, i/70), i, 0, 70));
+float(sum(pdf_beta(i/70, 5, 10)/70, i, 0, 70));
+float(sum(pdf_scaled_beta(i/70, 5, 10, 0.8, 0.8)/70, i, 0, 70));
+
+/* Study conjunction introduction */
+
+/* Histogram of a beta distribution */
+block([n, a, b, smp, m, v], n: 1000, a: 50, b: 30, smp: random_beta(a, b, n), m: mean(smp), v: var(smp), histogram(smp, nclasses = [0, 1, 50], title = printf(false, "Sampled (size=~a) beta dist with α=~a, β=~a, μ=~,4f, σ²=~,4f", n, a, b, m, v), xlabel = "Probability", ylabel = "Density", frequency = density), keepfloat);
+
+/*
+Plot on a chart
+- pdf of beta distribution of premises
+- histogram of conclusion of independence-based conjunction introduction.
+
+Arguments are
+- n: sample size of each beta distribution
+- s: number of histogram bins
+- a1: alpha parameter of first premise
+- b1: beta parameter of first premise
+- a2: alpha parameter of second premise
+- b2: beta parameter of second premise
+- ymax: maximum range of the y axis
+*/
+plot_independence_conjunction_introduction(n, s, a1, b1, a2, b2, ymax) := block([smp1, m1, v1, smp2, m2, v2, smp, m, v], smp1: random_beta(a1, b1, n), m1: mean(smp1), v1: var(smp1), smp2: random_beta(a2, b2, n), m2: mean(smp2), v2: var(smp2), smp: create_list(pa*pb, pa, smp1, pb, smp2), m: mean(smp), v: var(smp), draw2d(title = printf(false, "Independence Conjuction Introduction (smp size: ~a*~a, hist size: ~a)", n, n, s), xlabel = "Probability", ylabel = "Density", histogram_description(smp, nclasses = [0, 1, s], key = printf(false, "μ=~,4f, σ²=~,8f", m, v), frequency = density), key = printf(false, "α=~a, β=~a, μ=~,4f, σ²=~,8f", a1, b1, m1, v1), color = blue, explicit(pdf_beta(x, a1, b1), x, 0, 1), key = printf(false, "α=~a, β=~a, μ=~,4f, σ²=~,8f", a2, b2, m2, v2), color = green, explicit(pdf_beta(x, a2, b2), x, 0, 1), yrange = [0, ymax]), keepfloat);
+
+/* Histograms of independence-based conjunction introduction */
+plot_independence_conjunction_introduction(1000, 100, 6b3, 3b3, 1b3, 1b2, 100);
+plot_independence_conjunction_introduction(1000, 100, 500, 300, 100, 10, 30);
+plot_independence_conjunction_introduction(1000, 100, 50, 30, 100, 10, 20);
+plot_independence_conjunction_introduction(1000, 100, 5, 5, 5, 5, 6);
+plot_independence_conjunction_introduction(1000, 100, 3, 1, 4, 1, 6);
+plot_independence_conjunction_introduction(1000, 100, 2, 1, 1, 2, 6);
+plot_independence_conjunction_introduction(1000, 100, 1, 1, 1, 1, 6);
+plot_independence_conjunction_introduction(1000, 100, 0.5, 0.5, 0.5, 0.5, 25);
+plot_independence_conjunction_introduction(1000, 100, 0.1, 0.1, 0.1, 0.1, 80);
+plot_independence_conjunction_introduction(1000, 100, 0.01, 0.01, 0.01, 0.01, 110);
+
+/*
+Plot on a chart
+- pdf of beta distribution of premises
+- histogram of conclusion of uniform-distrolet-based conjunction introduction.
+
+Arguments are
+- n: sample size of each beta distribution
+- s: number of histogram bins
+- a1: alpha parameter of first premise
+- b1: beta parameter of first premise
+- a2: alpha parameter of second premise
+- b2: beta parameter of second premise
+- ymax: maximum range of the y axis
+*/
+random_uniform_distrolet(pa, pb) := block([l, u], l: lower(pa, pb), u: upper(pa, pb), if l < u then random_continuous_uniform(l, u) else u);
+plot_unidistrolet_conjunction_introduction(n, s, a1, b1, a2, b2, ymax) := block([smp1, m1, v1, smp2, m2, v2, smp, m, v], smp1: random_beta(a1, b1, n), m1: mean(smp1), v1: var(smp1), smp2: random_beta(a2, b2, n), m2: mean(smp2), v2: var(smp2), smp: create_list(random_uniform_distrolet(pa, pb), pa, smp1, pb, smp2), m: mean(smp), v: var(smp), draw2d(title = printf(false, "Uniform Distrolet Conjuction Introduction (smp size: ~a*~a, hist size: ~a)", n, n, s), xlabel = "Probability", ylabel = "Density", histogram_description(smp, nclasses = [0, 1, s], key = printf(false, "μ=~,4f, σ²=~,8f", m, v), frequency = density), key = printf(false, "α=~a, β=~a, μ=~,4f, σ²=~,8f", a1, b1, m1, v1), color = blue, explicit(pdf_beta(x, a1, b1), x, 0, 1), key = printf(false, "α=~a, β=~a, μ=~,4f, σ²=~,8f", a2, b2, m2, v2), color = green, explicit(pdf_beta(x, a2, b2), x, 0, 1), yrange = [0, ymax]), keepfloat);
+
+/* Histograms of uniform distrolet based conjunction introduction */
+plot_unidistrolet_conjunction_introduction(1000, 100, 6b3, 3b3, 1b3, 1b2, 100);
+plot_unidistrolet_conjunction_introduction(1000, 100, 500, 300, 100, 10, 30);
+plot_unidistrolet_conjunction_introduction(1000, 100, 50, 30, 100, 10, 20);
+plot_unidistrolet_conjunction_introduction(1000, 100, 5, 5, 5, 5, 6);
+plot_unidistrolet_conjunction_introduction(1000, 100, 3, 1, 4, 1, 6);
+plot_unidistrolet_conjunction_introduction(1000, 100, 2, 1, 1, 2, 6);
+plot_unidistrolet_conjunction_introduction(1000, 100, 1, 1, 1, 1, 6);
+plot_unidistrolet_conjunction_introduction(1000, 100, 0.5, 0.5, 0.5, 0.5, 25);
+plot_unidistrolet_conjunction_introduction(1000, 100, 0.1, 0.1, 0.1, 0.1, 80);
+plot_unidistrolet_conjunction_introduction(1000, 100, 0.01, 0.01, 0.01, 0.01, 110);
+
+/*
+Plot on a chart
+- pdf of beta distribution of premises
+- histogram of conclusion of extreme-based conjunction introduction.
+
+Arguments are
+- n: sample size of each beta distribution
+- s: number of histogram bins
+- a1: alpha parameter of first premise
+- b1: beta parameter of first premise
+- a2: alpha parameter of second premise
+- b2: beta parameter of second premise
+- ymax: maximum range of the y axis
+*/
+random_extreme_distrolet(pa, pb) := block([l, u], l: lower(pa, pb), u: upper(pa, pb), if random_bernoulli(0.5) = 1 then l else u);
+plot_extdistrolet_conjunction_introduction(n, s, a1, b1, a2, b2, ymax) := block([smp1, m1, v1, smp2, m2, v2, smp, m, v], smp1: random_beta(a1, b1, n), m1: mean(smp1), v1: var(smp1), smp2: random_beta(a2, b2, n), m2: mean(smp2), v2: var(smp2), smp: create_list(random_extreme_distrolet(pa, pb), pa, smp1, pb, smp2), m: mean(smp), v: var(smp), draw2d(title = printf(false, "Extreme Distrolet Conjuction Introduction (smp size: ~a*~a, hist size: ~a)", n, n, s), xlabel = "Probability", ylabel = "Density", histogram_description(smp, nclasses = [0, 1, s], key = printf(false, "μ=~,4f, σ²=~,8f", m, v), frequency = density), key = printf(false, "α=~a, β=~a, μ=~,4f, σ²=~,8f", a1, b1, m1, v1), color = blue, explicit(pdf_beta(x, a1, b1), x, 0, 1), key = printf(false, "α=~a, β=~a, μ=~,4f, σ²=~,8f", a2, b2, m2, v2), color = green, explicit(pdf_beta(x, a2, b2), x, 0, 1), yrange = [0, ymax]), keepfloat);
+
+/* Histograms of extreme distrolet based conjunction introduction */
+plot_extdistrolet_conjunction_introduction(1000, 100, 6b3, 3b3, 1b3, 1b2, 100);
+plot_extdistrolet_conjunction_introduction(1000, 100, 500, 300, 100, 10, 30);
+plot_extdistrolet_conjunction_introduction(1000, 100, 50, 30, 100, 10, 20);
+plot_extdistrolet_conjunction_introduction(1000, 100, 5, 5, 5, 5, 6);
+plot_extdistrolet_conjunction_introduction(1000, 100, 3, 1, 4, 1, 6);
+plot_extdistrolet_conjunction_introduction(1000, 100, 2, 1, 1, 2, 6);
+plot_extdistrolet_conjunction_introduction(1000, 100, 1, 1, 1, 1, 6);
+plot_extdistrolet_conjunction_introduction(1000, 100, 0.5, 0.5, 0.5, 0.5, 25);
+plot_extdistrolet_conjunction_introduction(1000, 100, 0.1, 0.1, 0.1, 0.1, 80);
+plot_extdistrolet_conjunction_introduction(1000, 100, 0.01, 0.01, 0.01, 0.01, 110);
+
+/* NEXT: explore using A<->B instead of A->B */
+
+/* NEXT: explore various TVs with non null confidence for A<->B or A->B */
+
+/* Plot pAB = (pa*pab + pb*pab) / (1 + pab) w.r.t. pab within bounds
+   max(pa+pb-1, 0) <= pab <= min(pa/pb, pb/pa) */
+pABf(pa, pb, pab) := (pa*pab+pb*pab)/(1+pab);
+pab_lower(pa, pb) := max(pa+pb-1, 0);
+pab_upper(pa, pb) := min(pa/pb, pb/pa);
+pab_dst(pa, pb) := pab_upper(pa, pb) - pab_lower(pa, pb);
+plot_pAB_wrt_pab(pa1, pb1, pa2, pb2, pa3, pb3, pa4, pb4, pa5, pb5) := block([l1, u1, l2, u2], l1: pab_lower(pa1, pb1), u1: pab_upper(pa1, pb1), l2: pab_lower(pa2, pb2), u2: pab_upper(pa2, pb2), l3: pab_lower(pa3, pb3), u3: pab_upper(pa3, pb3), l4: pab_lower(pa4, pb4), u4: pab_upper(pa4, pb4), l5: pab_lower(pa5, pb5), u5: pab_upper(pa5, pb5), draw2d(title = "pAB=(pa*pab+pb*pab)/(1+pab) w.r.t. pab where pa=P(A), pb=P(B)", xlabel = "pab=P(A∧B|A∨B)", ylabel = "pAB=P(A∧B)", xrange = [0, 1], yrange = [0, 1], key_pos=top_left, key = printf(false, "pa=~a, pb=~a", pa1, pb1), color = blue, explicit(pABf(pa1, pb1, pab), pab, l1, u1), key = printf(false, "pa=~a, pb=~a", pa2, pb2), color = green, explicit(pABf(pa2, pb2, pab), pab, l2, u2), key = printf(false, "pa=~a, pb=~a", pa3, pb3), color = orange, explicit(pABf(pa3, pb3, pab), pab, l3, u3), key = printf(false, "pa=~a, pb=~a", pa4, pb4), color = purple, explicit(pABf(pa4, pb4, pab), pab, l4, u4), key = printf(false, "pa=~a, pb=~a", pa5, pb5), color = brown, explicit(pABf(pa5, pb5, pab), pab, l5, u5)));
+
+/* Plot pAB wrt pab for various values of pa and pb */
+plot_pAB_wrt_pab(0.9, 0.8, 0.2, 0.7, 0.5, 0.5, 0.5, 0.1, 0.9, 0.1);
+
+/* Plot pab = pAB / (pa + pb - pAB) w.r.t. pAB within bounds
+   max(pa+pb-1, 0) <= pAB <= min(pa, pb)`) */
+pabf(pa, pb, pAB) := pAB / (pa + pb - pAB);
+plot_pab_wrt_pAB(pa1, pb1, pa2, pb2, pa3, pb3, pa4, pb4, pa5, pb5) := block([l1, u1, l2, u2], l1: lower(pa1, pb1), u1: upper(pa1, pb1), l2: lower(pa2, pb2), u2: upper(pa2, pb2), l3: lower(pa3, pb3), u3: upper(pa3, pb3), l4: lower(pa4, pb4), u4: upper(pa4, pb4), l5: lower(pa5, pb5), u5: upper(pa5, pb5), draw2d(title = "pab=pAB/(pa+pb-pAB) w.r.t. pAB where pa=P(A), pb=P(B)", xlabel = "pAB=P(A∧B)", ylabel = "pab=P(A∧B|A∨B)", xrange = [0, 1], yrange = [0, 1], key_pos=top_left, key = printf(false, "pa=~a, pb=~a", pa1, pb1), color = blue, explicit(pabf(pa1, pb1, pab), pab, l1, u1), key = printf(false, "pa=~a, pb=~a", pa2, pb2), color = green, explicit(pabf(pa2, pb2, pab), pab, l2, u2), key = printf(false, "pa=~a, pb=~a", pa3, pb3), color = orange, explicit(pabf(pa3, pb3, pab), pab, l3, u3), key = printf(false, "pa=~a, pb=~a", pa4, pb4), color = purple, explicit(pabf(pa4, pb4, pab), pab, l4, u4), key = printf(false, "pa=~a, pb=~a", pa5, pb5), color = brown, explicit(pabf(pa5, pb5, pab), pab, l5, u5)));
+
+/* Plot pAB wrt pab for various values of pa and pb */
+plot_pab_wrt_pAB(0.9, 0.8, 0.2, 0.7, 0.5, 0.5, 0.5, 0.1, 0.9, 0.1);
+
+/* Randomly sample pAB such that pab is uniformaly distributed */
+pdf_pab(x, pa, pb) := if (x < pab_lower(pa, pb) or pab_upper(pa, pb) < x) then 0 else 1 / pab_dst(pa, pb);
+random_pAB_once(pa, pb) := block([l, u], l: pab_lower(pa, pb), u: pab_upper(pa, pb), pABf(pa, pb, if l < u then random_continuous_uniform(l, u) else u));
+random_pAB(pa, pb, n) := block([l, u], l: pab_lower(pa, pb), u: pab_upper(pa, pb), create_list(pABf(pa, pb, x), x, if l < u then random_continuous_uniform(l, u, n) else makelist(u, n)));
+/* Plot pAB and pab distributions w.r.t. pa and pb */
+plot_pAB_pab_distrolet(n, s, pa, pb, kp) := block([pab_l, pab_u, pAB_l, pab_m, pab_v, pAB_u, pAB_smp, pAB_m, pAB_v], pab_l: pab_lower(pa, pb), pab_u: pab_upper(pa, pb), pab_m: mean_continuous_uniform(pab_l, pab_u), pab_v: var_continuous_uniform(pab_l, pab_u), pAB_l: lower(pa, pb), pAB_u: upper(pa, pb), pAB_smp: random_pAB(pa, pb, n), pAB_m: mean(pAB_smp), pAB_v: var(pAB_smp), draw2d(title = printf(false, "Distrolet of P(A∧B) given uniform P(A∧B|A∨B) for P(A)=~a and P(B)=~a", pa, pb), xlabel = "Probability", ylabel = "Density", xrange = [0, 1], key_pos = kp, histogram_description(pAB_smp, nclasses = [0, 1, s], key = printf(false, "P(A∧B), μ=~,2f, σ²=~,4f", pAB_m, pAB_v), frequency = density), key = printf(false, "P(A↔B), μ=~,2f, σ²=~,4f", pab_m, pab_v), color = blue, explicit(pdf_pab(x, pa, pb), x, 0, 1)), keepfloat);
+
+/* Plot pAB and pab distributions for various values of pa and pb */
+plot_pAB_pab_distrolet(1000000, 100, 0.9, 0.8, top_left);
+plot_pAB_pab_distrolet(1000000, 100, 0.2, 0.7, top_right);
+plot_pAB_pab_distrolet(1000000, 100, 0.5, 0.5, top_right);
+plot_pAB_pab_distrolet(1000000, 100, 0.5, 0.1, top_right);
+plot_pAB_pab_distrolet(1000000, 100, 0.9, 0.1, top_right);
+
+/*
+Plot on a chart
+- pdf of beta distribution of premises
+
+- histogram of conclusion of uniform-equivalence-distrolet-based
+  conjunction introduction.  That is P(A↔B) is sampled uniformly and
+  P(A∧B) is obtained from pABf.
+
+Arguments are
+- n: sample size of each beta distribution
+- s: number of histogram bins
+- a1: alpha parameter of first premise
+- b1: beta parameter of first premise
+- a2: alpha parameter of second premise
+- b2: beta parameter of second premise
+- ymax: maximum range of the y axis
+*/
+plot_equdistrolet_conjunction_introduction(n, s, a1, b1, a2, b2, ymax) := block([smp1, m1, v1, smp2, m2, v2, smp, m, v], smp1: random_beta(a1, b1, n), m1: mean(smp1), v1: var(smp1), smp2: random_beta(a2, b2, n), m2: mean(smp2), v2: var(smp2), smp: create_list(random_pAB_once(pa, pb), pa, smp1, pb, smp2), m: mean(smp), v: var(smp), draw2d(title = printf(false, "UniEqui Distrolet Conjuction Introduction (smp size: ~a*~a, hist size: ~a)", n, n, s), xlabel = "Probability", ylabel = "Density", histogram_description(smp, nclasses = [0, 1, s], key = printf(false, "μ=~,4f, σ²=~,8f", m, v), frequency = density), key = printf(false, "α=~a, β=~a, μ=~,4f, σ²=~,8f", a1, b1, m1, v1), color = blue, explicit(pdf_beta(x, a1, b1), x, 0, 1), key = printf(false, "α=~a, β=~a, μ=~,4f, σ²=~,8f", a2, b2, m2, v2), color = green, explicit(pdf_beta(x, a2, b2), x, 0, 1), yrange = [0, ymax]), keepfloat);
+
+/* Histograms of uniform distrolet based conjunction introduction */
+plot_equdistrolet_conjunction_introduction(1000, 100, 6b3, 3b3, 1b3, 1b2, 100);
+plot_equdistrolet_conjunction_introduction(1000, 100, 500, 300, 100, 10, 30);
+plot_equdistrolet_conjunction_introduction(1000, 100, 50, 30, 100, 10, 20);
+plot_equdistrolet_conjunction_introduction(1000, 100, 5, 5, 5, 5, 6);
+plot_equdistrolet_conjunction_introduction(1000, 100, 3, 1, 4, 1, 6);
+plot_equdistrolet_conjunction_introduction(1000, 100, 2, 1, 1, 2, 6);
+plot_equdistrolet_conjunction_introduction(1000, 100, 1, 1, 1, 1, 6);
+plot_equdistrolet_conjunction_introduction(1000, 100, 0.5, 0.5, 0.5, 0.5, 25);
+plot_equdistrolet_conjunction_introduction(1000, 100, 0.1, 0.1, 0.1, 0.1, 80);
+/* Disabled because of zero divisor
+plot_equdistrolet_conjunction_introduction(1000, 100, 0.01, 0.01, 0.01, 0.01, 110);
+*/
