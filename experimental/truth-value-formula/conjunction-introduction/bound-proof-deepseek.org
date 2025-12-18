@@ -1,0 +1,723 @@
+The following is the output of deepseek-r1:14b when prompted with the
+question:
+
+What is lower and upper bounds of z/(x+y-z) if the lower bound
+of pAB is max(x+y-1, 0) and its upper bound is min(x, y)?
+
+#+BEGIN_QUOTE
+Okay, so I've got this problem where I need to figure out the lower
+and upper bounds for the expression \( \frac{z}{x + y - z} \). The
+constraints given are:
+
+\[ \max(x + y -1,0) \leq z \leq \min(x, y) \]
+
+Hmm, let me start by understanding what each part of this inequality
+means.
+
+First, the lower bound for \( z \) is either \( x + y -1 \) or0,
+whichever is larger. So if \( x + y -1 \) is positive, that's the
+lower limit; otherwise, \( z \) can be as low as0. The upper bound is
+simply the smaller of \( x \) and \( y \).
+
+I think I should consider different cases based on the values of \( x
+\) and \( y \) to analyze the bounds for \( z/(x + y - z) \).
+
+Let me note that the expression \( \frac{z}{x + y - z} \) involves
+both the numerator and denominator depending on \( z \), so changes in
+\( z \) will affect the value of this fraction.
+
+Maybe I should express the bounds for \( z \) first more clearly:
+
+Lower bound: \( z_{\text{min}} = \max(x + y -1,0) \)
+
+Upper bound: \( z_{\text{max}} = \min(x, y) \)
+
+So, depending on whether \( x + y -1 \) is positive or not, the lower
+limit changes.
+
+I should consider two main cases:
+
+Case 1:* \( x + y -1 \geq0 \), so the lower bound is \( z_{\text{min}}
+= x + y -1 \).
+
+Case 2:* \( x + y -1 <0 \), so the lower bound is \( z_{\text{min}} =0
+\).
+
+Let me start with Case 1*: \( x + y -1 \geq0 \)
+
+Here, \( z \) ranges from \( x + y -1 \) to \( \min(x, y) \). Let's
+denote \( /{\text{min}} = x + y - 1 \) and \( z/{\text{max}} = \min(x,
+y) \).
+
+Now, I need to find the bounds for \( f(z) = \frac{z}{x + y - z}
+\). Let's analyze how this function behaves as \( z \) changes within
+its allowed range.
+
+Firstly, let me compute \( f(z_{\text{min}}) \):
+
+\( f(z_{\text{min}}) = \frac{x + y -1}{x + y - (x + y -1)} = \frac{x
++ y -1}{1} = x + y -1 \)
+
+Hmm, interesting. Now, what is \( f(z_{\text{max}}) \)?
+
+Since \( z/{\text{max}} = \min(x, y) \), let's suppose without loss of
+generality that \( x \leq y \). Then \( z/{\text{max}} = x \).
+
+So,
+
+\( f(z_{\text{max}}) = \frac{x}{x + y - x} = \frac{x}{y} \)
+
+But wait, if \( x \leq y \), then \( \frac{x}{y} \leq1 \). So in this
+case, the maximum value of \( f(z) \) is at least \( x/(y) \).
+
+Wait a second, but I need to confirm whether \( z \) can actually
+reach up to \( \min(x, y) \). Since \( z_{\text{max}} = \min(x, y) \),
+yes. So in this case, when \( x + y -1 \geq0 \), the expression \(
+f(z) \) ranges from \( x + y -1 \) up to \( \frac{\min(x, y)}{x + y -
+\min(x, y)} \).
+
+Wait, that might be more complicated. Let me recast this.
+
+Let's take a specific example where \( x =2 \), \( y =3 \). Then:
+
+\( z_{\text{min}} =2 +3 -1 =4 \) \( z_{\text{max}} = \min(2,3) =2 \)
+
+Wait, hold on! That can't be right because if \( x =2 \), \( y =3 \),
+then the lower bound for \( z \) is \(4 \), but \( z \) cannot exceed
+\(2 \) since \( \min(2,3) =2 \). But this would mean that \( z \) has
+to be between4 and2, which isn't possible because the lower bound is
+higher than the upper bound. That suggests I made a mistake in my
+initial assumption.
+
+Wait, so perhaps Case1 where \( x + y -1 \geq0 \) may not always hold
+when considering that \( z/{\text{min}} \leq z/{\text{max}} \).
+
+So maybe another approach is needed. Let's check for the condition
+when \( x + y -1 \leq \min(x, y) \), because otherwise, there would be
+no solution as the lower bound exceeds the upper bound.
+
+So we need that:
+
+\( \max(x + y -1,0) \leq \min(x, y) \)
+
+Which gives two inequalities depending on whether \( x + y -1 \geq0
+\):
+
+If \( x + y -1 \geq0 \), then we must have \( x + y -1 \leq \min(x, y)
+\).
+
+Suppose again without loss of generality that \( x \leq y \). Then \(
+\min(x, y) = x \). So the condition becomes:
+
+\( x + y -1 \leq x \implies y -1 \leq0 \implies y \leq1 \)
+
+So if \( x \leq y \) and \( y \leq1 \), then the lower bound is \( x
++ y -1 \) and upper bound is \( x \).
+
+But wait, since \( x \leq y \leq1 \), then \( x \) must be less than
+or equal to1 as well.
+
+Alternatively, let's consider whether \/{\text{min}} = \max(x + y - 1,
+0) \leq z/{\text{max}} = \min(x, y) \).
+
+So the condition is:
+
+\( \max(x + y -1,0) \leq \min(x, y) \)
+
+Which can be broken down into two cases:
+
+1. If \( x + y -1 >0 \), then \( x + y -1 \leq \min(x, y) \)
+2. If \( x + y -1 \leq0 \), then the condition is automatically
+satisfied because the lower bound becomes0.
+
+So let's consider case where \( x + y -1 >0 \), so we must have \( x
++ y -1 \leq \min(x, y) \).
+
+Without loss of generality, suppose \( x \leq y \). Then, \( \min(x,
+y) = x \), so:
+
+\( x + y -1 \leq x \implies y -1 \leq0 \implies y \leq1 \)
+
+But since \( x \leq y \), then \( x \leq y \leq1 \).
+
+Wait, that means both variables are bounded above by1.
+
+Hmm. So in this situation, if \( x + y -1 >0 \) and \( y \leq1 \),
+let's see:
+
+Since \( x + y -1 >0 \implies x + y >1 \).
+
+But since \( x \leq y \leq1 \), so the maximum of \( x + y \) is when
+both are1, which gives \( x + y =2 \). So \( x + y -1 \geq0 \implies x
++ y \geq1 \).
+
+But given that \( y \leq1 \), and \( x \leq y \), so the lower bounds
+for \( x + y \) is when both are as small as possible.
+
+Wait, perhaps it's better to just proceed with analyzing \( f(z) =
+z/(x + y - z) \).
+
+Let me try a substitution. Let me denote \( t = z \). Then:
+
+\( f(t) = \frac{t}{(x + y) - t} \)
+
+This function is increasing in \( t \), because its derivative with
+respect to \( t \) is positive:
+
+\( f'(t) = \frac{(1)(x + y - t) - (-1)t}{(x + y - t)^2} = \frac{x +
+y}{(x + y - t)^2} >0 \)
+
+So since \( f(t) \) is increasing, its minimum occurs at the lower
+bound of \( z \), and maximum at upper bound.
+
+Thus, in any valid case where \( z/{\text{min}} \leq z/{\text{max}}
+\), the bounds for \( f(z) \) are:
+
+Lower bound: \( f(z/{\text{min}}) = \frac{z/{\text{min}}}{x + y -
+z_{\text{min}}} \)
+
+Upper bound: \( f(z/{\text{max}}) = \frac{z/{\text{max}}}{x + y -
+z_{\text{max}}} \)
+
+But let's consider the two cases where \( x + y -1 \leq0 \) and \( x
++ y -1 >0 \).
+Case A: \( x + y - 1 \leq 0 \)*
+
+Then, \( /{\text{min}} = 0 \), \( z/{\text{max}} = \min(x, y)
+\). Thus,
+
+\( f(z_{\text{min}}) =0/(x + y -0) =0 \)
+
+And
+
+\( f(z_{\text{max}}) = \frac{\min(x, y)}{x + y - \min(x, y)} \)
+
+Suppose \( x \leq y \), so \( z_{\text{max}} = x \):
+
+Then,
+
+\( f(z_{\text{max}}) = \frac{x}{(x + y) - x} = \frac{x}{y} \)
+
+Similarly, if \( y \leq x \), then \( z_{\text{max}} = y \), and
+
+\( f(z_{\text{max}}) = \frac{y}{(x + y) - y} = \frac{y}{x} \)
+
+So in this case, the bounds are from0 up to either \( x/y \) or \( y/x
+\), depending on which is smaller.
+
+Wait, but since \( f(z) \) is increasing, and we know that the maximum
+value occurs at \( z = \min(x, y) \). So if \( x \leq y \), then it's
+\( x/y \); else, it's \( y/x \).  Case B: \( x + y - 1 > 0 \)*
+
+Here, \( /{\text{min}} = x + y - 1 \) and \( z/{\text{max}} = \min(x,
+y) \). But as we saw earlier, for this to be valid (i.e., \(
+z/{\text{min}} \leq z/{\text{max}} \)), it must hold that:
+
+\( x + y -1 \leq \min(x, y) \)
+
+Which, without loss of generality, let's assume \( x \leq y \), so \(
+\min(x, y) = x \). Then,
+
+\( x + y -1 \leq x \implies y -1 \leq0 \implies y \leq1 \)
+
+Thus, in this case, we must have \( y \leq1 \), with \( x \leq y \).
+
+So the bounds for \( f(z) \) are:
+
+Lower bound: \( f(z_{\text{min}}) = (x + y -1)/(x + y - (x + y -1)) =
+(x + y -1)/1 = x + y -1 \)
+
+Upper bound: \( f(z_{\text{max}}) = \frac{x}{(x + y) - x} = x/y \),
+since \( x \leq y \leq1 \).
+
+Wait, but let's verify with specific numbers. Let me pick \( x =0.5
+\), \( y =0.6 \). Then:
+
+\( x + y =1.1 >1 \) so lower bound is \( z_{\text{min}} =1.1 -1 0.1 \)
+Upper bound: \( z_{\text{max}} =0.5 \)
+
+So \( f(z) = z/(1.1 - z) \), which is increasing in \( z \). Thus,
+
+Lower bound of \( f(z) \): when \( z =0.1 \), \( f(0.1) =0.1 / (1.1
+-0.1) =0.1/1.0 =0.1 \)
+
+Upper bound: when \( z =0.5 \), \( f(0.5) =0.5/(1.1 -0.5) =0.5/0.6
+≈0.8333 \)
+
+So the range is from0.1 to approximately0.8333.
+
+Alternatively, let's take \( x = y =1 \). Then:
+
+\( z_{\text{min}} =1 +1 -1 =1 \) \( z_{\text{max}} =1 \)
+
+So \( f(z) =1/(2 -1) =1/1 =1 \), so the only possible value is1, which
+is consistent with both bounds.
+
+Another example: \( x =0.8 \), \( y =1 \). Then:
+
+\( z_{\text{min}} =0.8 +1 -1 =0.8 \) \( z_{\text{max}} =0.8 \)
+
+So again, only one value: \( f(z) =0.8/(2 -0.8) =0.8/1.2 ≈0.6667 \).
+
+Wait, but in this case, since \( x + y -1 =0.8 >0 \), and \(
+z/{\text{min}} = z/{\text{max}} =0.8 \). So it's a single point.
+
+Let me try another example where \( x =0.6 \) and \( y =0.7 \):
+
+\( x + y -1 =1.3 -1 =0.3 >0 \) \( /{\text{min}} = 0.3 \), \(
+z/{\text{max}} =0.6 \)
+
+Then, lower bound for \( f(z) =0.3/(1.3 -0.3) =0.3/1.0 =0.3 \) Upper
+bound: \(0.6/(1.3 -0.6) =0.6/0.7 ≈0.8571 \)
+
+So, the expression can range from0.3 to approximately0.8571.
+
+Alright, so putting it all together:
+
+If \( x + y -1 \leq0 \), then \( z \) is between0 and \( \min(x, y)
+\). The function \( f(z) = z/(x + y - z) \) ranges from0 up to either
+\( x/y \) or \( y/x \) depending on which of \( x \) or \( y \) is
+smaller.
+
+If \( x + y -1 >0 \), then \( z \) must be between \( x + y -1 \) and
+\( \min(x, y) \). Moreover, for this to hold without the lower bound
+exceeding the upper bound, it's necessary that \( \max(x, y) \leq1
+\). Thus, in such cases, \( f(z) \) ranges from \( x + y -1 \) up to
+either \( x/y \) or \( y/x \).
+
+Wait, but perhaps a more precise way is needed. Let me think again.
+
+So the bounds for \( z/(x + y - z) \):
+
+- If \( x + y -1 >0 \) and \( \min(x, y) \geq x + y -1 \), then:
+
+   Lower bound: \( (x + y -1)/(x + y - (x + y -1)) = x + y -1 \)
+
+   Upper bound: \( \frac{\min(x, y)}{x + y - \min(x, y)} \). Let's see
+  if this can be expressed differently.
+
+Alternatively, perhaps we can find a general expression regardless of
+the cases.
+
+Wait, another thought: maybe instead of breaking into two main cases
+based on whether \( x + y >1 \) or not, I should consider both
+possibilities for \( z \).
+
+But perhaps it's better to express in terms of constraints.
+
+Wait, let me think about this function \( f(z) = z/(x + y - z)
+\). Since \( z \) is bounded between \( \max(x + y -1,0) \) and \(
+\min(x, y) \), the expression can be analyzed as follows:
+
+Because \( f(z) \) is an increasing function of \( z \), its minimum
+occurs at the lower bound \( z/{\text{min}} \) and maximum at \(
+z/{\text{max}} \).
+
+Thus,
+
+Lower bound of \( f(z) = \frac{\max(x + y -1,0)}{x + y - \max(x + y
+-1,0)} \)
+
+Upper bound of \( f(z) = \frac{\min(x, y)}{x + y - \min(x, y)} \)
+
+Let me compute each part:
+
+Compute lower bound:
+
+If \( x + y >1 \), then \( z_{\text{min}} = x + y -1 \). So,
+
+Lower bound: \( (x + y -1)/(x + y - (x + y -1)) = (x + y -1)/1 = x + y
+-1 \)
+
+If \( x + y \leq1 \), then \( z_{\text{min}} =0 \). So,
+
+Lower bound:0/(x + y) =0
+
+Compute upper bound:
+
+Upper bound is \( \frac{\min(x, y)}{x + y - \min(x, y)} \)
+
+Which can be expressed as:
+
+If \( x \leq y \), then it's \( \frac{x}{y} \) Else, it's \(
+\frac{y}{x} \)
+
+Wait, but let me verify with examples.
+
+Let me take \( x =2 \), \( y =3 \). Wait, earlier we saw that in this
+case, lower bound is4 and upper bound is2, which is impossible. So
+perhaps the condition where \( x + y >1 \) must be combined with other
+constraints to ensure that \( z/{\text{min}} \leq z/{\text{max}} \).
+
+So actually, when \( x + y -1 \leq \min(x, y) \), which as we saw
+requires \( x + y -1 \leq x \) if \( x \leq y \), leading to \( y \le
+1 \). Similarly, for \( y \leq x \), \( x \leq1 \).
+
+Therefore, in cases where both \( x \) and \( y \) are greater than or
+equal to some values that allow the lower bound not to exceed upper
+bounds.
+
+So maybe it's better to define:
+
+The expression \( f(z) = z/(x + y - z) \) has its minimum at0 (when \(
+x + y \leq1 \)) and maximum at either \( x/y \) or \( y/x \),
+depending on which is smaller. However, when \( x + y >1 \), then the
+lower bound becomes \( x + y -1 \) and upper bound as before.
+
+Wait, perhaps I should write the bounds as:
+
+- If \( x + y \leq1 \):
+
+   Lower bound of \( f(z) =0 \)
+   
+   Upper bound of \( f(z) = \min(x/y, y/x) \)
+
+- If \( x + y >1 \):
+
+   Then we must have both \( x \leq1 \) and \( y \leq1 \), since if \(
+  x + y >1 \) but one variable is greater than1, the other can be up
+  to a certain point.
+
+Wait no, actually that's not necessarily true. Let me think again.
+
+If \( x =2 \), \( y =0.5 \):
+
+Then, \( x + y =2.5 >1 \)
+
+But then,
+
+\( z_{\text{min}} =2.5 -1 =1.5 \) \( z_{\text{max}} = \min(2,0.5) =0.5
+\)
+
+Which is impossible because \( z/{\text{min}} > z/{\text{max}}
+\). Thus, no solution exists in this case.
+
+Therefore, when \( x + y -1 >0 \), it's only possible if \( x + y -1
+\leq \min(x, y) \).
+
+Which requires:
+
+- If \( x \leq y \), then \( x + y -1 \leq x \implies y -1 \leq0
+  \implies y \leq1 \)
+- Similarly, if \( y \leq x \), then \( y \leq1 \)
+
+So in other words, for the lower bound to be valid when \( x + y >1
+\), we must have that the larger of \( x \) and \( y \) is at most1.
+
+Hence, only possible if both variables are ≤1?
+
+Wait no. Because even if one variable is greater than1, but as long as
+\( x + y -1 \leq \min(x, y) \), it's acceptable.
+
+But let me see:
+
+Suppose \( x =0.6 \), \( y =1.5 \). Then,
+
+\( z_{\text{min}} =0.6 +1.5 -1 =1.1 \) \( z_{\text{max}} =
+\min(0.6,1.5) =0.6 \)
+
+Which again is impossible because \(1.1 >0.6 \).
+
+So in reality, when \( x + y >1 \), it's only possible if the smaller
+of \( x \) and \( y \) is greater than or equal to \( x + y -1
+\). Hmm, perhaps a bit more precise:
+
+Let’s suppose that \( x \leq y \), so \( \min(x, y) =x \).
+
+Thus, for \( z/{\text{min}} \leq z/{\text{max}} \):
+
+\( x + y -1 \leq x \implies y -1 \leq0 \implies y \leq1 \)
+
+Similarly, if \( y \leq x \), then:
+
+\( x + y -1 \leq y \implies x -1 \leq0 \impliesx \leq1 \)
+
+Thus, in either case, when \( x + y >1 \), we must have the larger
+variable ≤1.
+
+Therefore, if \( x + y >1 \), then both variables cannot exceed1;
+otherwise, there is no feasible solution for \( z \).
+
+Wait, not exactly. Let me take an example:
+
+Let’s say \( x =0.7 \) and \( y =0.8 \). Then,
+
+\( x + y =1.5 >1 \)
+
+Then,
+
+\( z_{\text{min}} =1.5 -1=0.5 \) \( z_{\text{max}} =0.7 \)
+
+So \( z \) can range from0.5 to0.7, which is feasible.
+
+Therefore, in this case, both variables are less than or equal to1,
+and their sum exceeds1.
+
+Another example: \( x=1 \), \( y=1 \). Then,
+
+\( z_{\text{min}} =2-1=1\) \( z_{\text{max}}=1\)
+
+Thus, only possible value is1, as before.
+
+So to generalize:
+
+The bounds for \( f(z) = z/(x + y - z) \):
+
+If \( x + y \leq1 \), then:
+
+- Lower bound:0
+- Upper bound:\( \min(x/y, y/x) \)
+
+If \( x + y >1 \) and the larger of \( x \) and \( y \) is ≤1 (i.e.,
+both variables are ≤1):
+
+- Lower bound: \(x + y -1\)
+- Upper bound: same as above, which is either \(x/y\) or \(y/x\),
+  depending on which is smaller.
+
+Wait, but in the case where \( x + y >1 \) and both are ≤1, does the
+upper bound stay at \( \min(x/y, y/x) \)?
+
+Yes. Because when \( z_{\text{max}} = \min(x,y) \), then:
+
+If \( x \leq y \), \( f(z_{\text{max}})=x/(y)\) Else, it's \(y/x\)
+
+So in both cases where \( x + y >1 \) and feasible, the upper bound
+remains either \(x/y\) or \(y/x\).
+
+Therefore, to wrap up:
+
+The expression \( z/(x+y -z) \) has bounds depending on whether \( x +
+y \leq1 \) or \( x + y >1 \), provided that when \( x + y >1 \), the
+variables are such that their minimum is at least \( x + y -1 \).
+
+Thus, finally:
+
+- If \(x + y \leq1\):
+   - Lower bound:0
+   - Upper bound:\( \min(x/y, y/x) \)
+  
+- If \(x + y >1\) and both variables are ≤1:
+   - Lower bound: \(x + y -1\)
+   - Upper bound: same as above.
+
+Wait, but in the second case, if \( x + y >1 \), we can actually
+write:
+
+Lower bound: \(x + y -1\)
+
+Upper bound: depends on which is smaller between \(x\) and \(y\):
+
+If \(x \leq y\): Upper bound: \(x/y\)
+   
+Else: Upper bound: \(y/x\)
+
+But let me consider this again.
+
+Let’s take an example where \( x =0.6 \), \( y =0.7 \). Then:
+
+\(x + y =1.3 >1\)
+
+Lower bound for \( f(z) =1.3 -1=0.3\) Upper bound: since \(x < y\),
+it's \(0.6/0.7 ≈0.8571\)
+
+Another example: \( x =0.4 \), \( y=0.9 \). Then:
+
+Lower bound for \( f(z) =1.3 -1=0.3\) Upper bound: since \(x < y\),
+it's \(0.4/0.9 ≈0.4444\)
+
+Wait, but in the first case where \( x=0.6 \), \(y=0.7\), the upper
+bound was higher than in this second example.
+
+So maybe the upper bound is not necessarily a fixed ratio but depends
+on how small \(x\) or \(y\) are.
+
+Alternatively, perhaps it's better to write:
+
+The bounds of \( f(z) = z/(x + y -z) \):
+
+- When \( x + y \leq1 \), it ranges from0 up to the minimum of \(x/y\)
+  and \(y/x\)
+  
+- When \( x + y >1 \), it ranges from \(x + y -1\) up to the same
+  upper bound as in the first case.
+
+Wait, but that doesn't seem precise because when \(x + y >1\), even if
+both are ≤1, the lower bound is \(x + y -1\).
+
+So perhaps a better way is:
+
+The expression \( \frac{z}{x + y - z} \) has the following bounds
+based on whether \( x + y \leq1 \) or not.
+
+- If \(x + y \leq1\): The expression can take any value between0 and
+  either \(x/y\) or \(y/x\), whichever is smaller.
+   
+- If \(x + y >1\) and the larger of \(x\) and \(y\) is ≤1: The
+  expression takes values starting from \(x + y -1\) up to the same
+  upper bound as before.
+
+Wait, but how does this make sense? Let me see:
+
+For \(x =0.6\), \(y=0.7\):
+
+- Since \(x + y =1.3 >1\), Lower bound:0.3 Upper bound:0.8571
+
+But if I had \(x=0.2\), \(y=0.9\) (so sum is1.1>1, but min(x,y)=0.2):
+
+Lower bound for f(z) would be1.1-1=0.1 Upper bound: since \(x < y\),
+it's0.2/0.9≈0.222
+
+But wait, if I had \(z\) between0.1 and0.2:
+
+\(f(0.1) =0.1/(1.1 -0.1)=0.1/1=0.1\)
+\(f(0.2)=0.2/(1.1-0.2)=0.2/0.9≈0.2222\)
+
+So the range is from0.1 to approximately0.2222.
+
+Hmm, in this case, even though \(x + y >1\), the upper bound is lower
+than when both variables are higher.
+
+Wait, but perhaps it's because when one variable is much smaller, the
+upper bound gets pulled down.
+
+So, maybe a general expression would be:
+
+- If \( x + y \leq1 \): The bounds for \( z/(x+y -z) \) are from0 to
+  \( \min(x/y, y/x) \)
+   
+- Else if \( x + y >1 \) and both \(x\) and \(y\) ≤1: The lower bound
+  is \( x + y -1 \), and the upper bound remains \( \min(x/y, y/x) \)
+
+Wait, but in our earlier example where \(x=0.6\), \(y=0.7\):
+
+\( \min(0.6/0.7,0.7/0.6 ) ≈0.8571 \) and \(0.4444\)
+respectively. Since \(0.6 <0.7\), the upper bound is
+\(0.6/0.7≈0.8571\)
+
+So in that case, it's correct.
+
+Wait, another example: \(x=0.9\), \(y=0.2\). Then,
+
+\(x + y =1.1 >1 \) Lower bound:1.1 -1=0.1 Upper bound since \( y <x
+\), \( f(z_{\text{max}})= y/x 0.2/0.9≈0.2222\)
+
+So yes, that works.
+
+But let's consider when both variables are exactly1: \(x =1\),
+\(y=1\):
+
+Then,
+
+Lower bound:2 -1=1 Upper bound:1/1=1
+
+Thus, the expression is fixed at1.
+
+Similarly, if one variable is1 and the other less than or equal to1:
+
+Say, \(x=1\), \(y=0.5\). Then,
+
+\(x + y =1.5 >1 \) Lower bound:1.5 -1=0.5 Upper bound since \(y < x\):
+\(y/x=0.5/1=0.5\)
+
+So here, the lower and upper bounds coincide at0.5.
+
+Wait, that can't be right because if \(x =1\) and \(y=0.5\):
+
+\( z \) must be between0.5 (since \(x + y -1=0.5\)) and0.5 (as
+min(x,y)=0.5). So only value is0.5, leading to
+\(f(z)=0.5/(1.5-0.5)=0.5/1=0.5\).
+
+So in this edge case, it's a fixed value.
+
+But let me check another example where \(x =0.9\), \(y=0.2\):
+
+As above,
+
+Lower bound:0.1 Upper bound:0.222
+
+And as \( z \) moves from0.1 to0.2, the function increases smoothly
+from0.1 to0.222.
+
+Hence, it seems consistent.
+
+Putting all together:
+
+The expression \( \frac{z}{x + y - z} \) has its bounds determined by
+two scenarios based on whether \( x + y \) exceeds1 or not:
+
+1. When \( x + y \leq 1 \)*:
+   - The lower bound of the expression is0, achieved when \( z =0 \).
+   - The upper bound is the minimum between \( \frac{x}{y} \) and \(
+     \frac{y}{x} \), depending on which variable is smaller. This
+     occurs when \( z = \min(x, y) \).
+
+2. When \( x + y > 1 \)*:
+   - Here, we must ensure that both \( x \) and \( y \) are such that
+     their minimum is at least \( x + y -1 \). If this condition holds
+     (i.e., the larger of the two variables is ≤1), then:
+     - The lower bound becomes \( x + y -1 \).
+     - The upper bound remains the same as in case1, which is either
+       \( \frac{x}{y} \) or \( \frac{y}{x} \).
+
+If \( x + y >1 \) but one variable exceeds1, it's impossible for \( z
+\) to satisfy both bounds simultaneously, leading to no feasible
+solution.
+
+So in summary:
+
+- The lower bound is either0 (if \( x + y \leq1 \)) or \( x + y -1 \)
+  (if \( x + y >1 \) and both variables are ≤1).
+- The upper bound is the minimum of \( x/y \) and \( y/x \).
+
+Thus, the bounds for \( \frac{z}{x + y - z} \) can be characterized
+as:
+
+\[ \boxed{ \max(0, x + y -1) \leq \frac{z}{x + y - z} \leq
+\min\left(\frac{x}{y}, \frac{y}{x}\right) } \]
+
+But wait, this might not capture all cases correctly. Let me check.
+
+Wait in the case when \( x + y >1 \), but the upper bound is still the
+same as when \( x + y ≤1 \). Is that correct?
+
+For example, take \(x=0.6\), \(y=0.7\) (\(x+y=1.3>1\)):
+
+Upper bound:0.6/0.7≈0.857
+
+Which is the same as if \(x + y ≤1 \). Wait no, in reality, when \( x
++ y >1 \), the upper bound is still determined by the min of \(x/y\)
+and \(y/x\), which could be higher or lower depending on specific
+values.
+
+Wait, perhaps another approach. Let me think:
+
+Since \(f(z) = z/(x+y -z)\) is increasing in \(z\), it attains its
+minimum at \( z/{\text{min}} \) and maximum at \( z/{\text{max}} \).
+
+Thus,
+
+- When \( x + y ≤1 \): \( z_{\text{min}} =0 \) \( z_{\text{max}} =
+  \min(x, y) \)
+   
+- When \( x + y >1 \) and feasible: \( z_{\text{min}} =x + y -1 \) \(
+  z_{\text{max}}= \min(x,y) \)
+
+Thus,
+
+The bounds on the expression are:
+
+Lower bound:
+- 0, if \( x + y ≤1 \)
+- \( x + y -1 \), otherwise
+
+Upper bound:
+- \( \frac{\min(x, y)}{x + y - \min(x, y)} = \frac{\min(x,y)}{\max(x,
+  y)} \) which is equivalent to \( \min\left(\frac{x}{y},
+  \frac{y}{x}\right) \)
+
+Thus, the final expression correctly captures both cases.
+
+So after going through this detailed thought process, I conclude that
+the bounds for \( \frac{z}{x + y - z} \) are indeed as above.
+#+END_QUOTE
