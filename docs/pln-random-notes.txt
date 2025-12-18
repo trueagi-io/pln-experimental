@@ -1,0 +1,701 @@
+P(pAB <= x|pA, pB, ANY GENERATOR CONSISTENT with A∩B is Bernoulli) = int_0^t PDF(t)dt
+
+TVA
+
+moments
+
+[0, 1]
+
+Mixture of beta distributions
+
+W1: A -> B
+W2: A <-> B
+W3: A ⊥ B
+W4: A <> B
+...
+
+pAB = pA
+pAB = pA - pB
+pAB = 0
+
+pAB = [0, 1]
+
+L < Pr.c < U
+L+w*U
+
+A->B ≞ TV
+...
+...
+...
+
+
+A ≞ STVA
+A = 𝜆x (p x)
+
+Reproduciblity
+
+Pr(D'|D, ...) =
+
+A∩B ≞ STV
+
+
+A->B [a]
+A->B [b]
+a ⊥ b ≞ <1, 1>
+|- Revision
+A->B ≞ STVAB
+
+X ~ Bernoulli(𝜃)
+
+X₁, X₂, ... ~ Bernoulli(𝜃)
+
+A -> B ≞ STVAB1 iid      {1} -> A, {1} -> B, A -> B   Induction
+A -> B ≞ STVAB2 iid      {2} -> A, {2} -> B, A -> B
+A -> B ≞ STVAB3 iid      ...
+A -> B ≞ STVAB4 iid
+A -> B ≞ STVAB5 iid
+A -> B ≞ STVAB6 iid
+A -> B ≞ STVAB7 iid
+1 ⊥ 2 ⊥ 3 ...
+|- Revision
+A -> B ≞ STVABn iid
+
+A -> B ≞ STVAB1 iid      A -> Fly , B -> Fly, A -> B   Abduction
+A -> B ≞ STVAB2 iid      A -> HasWings, B -> HasWings, A -> B
+A -> B ≞ STVAB3 iid      ...
+A -> B ≞ STVAB4 iid
+A -> B ≞ STVAB5 iid
+A -> B ≞ STVAB6 iid
+A -> B ≞ STVAB7 iid
+[1] ⊥ [2] ⊥ [3] ...
+|- Revision
+A -> B ≞ STVABn iid
+
+Abduction:
+A ..> B --> C
+\---------/
+
+Induction:
+A --> B ..> C
+\---------/
+
+
+<0.5, 0.999>
+<0, 0.999>
+<1, 0.999>
+
+Pr(D'|D) = int 
+
+A->B ≞ UTV
+
+A->G ≞ STVAG
+B->G ≞ STVBG
+C->G ≞ STVCG
+...
+A ≞ STVA
+B ≞ STVB
+C ≞ STVC
+...
+|-
+G ≞ UTV
+
+A -> Z ≞ TV1
+B -> Z ≞ TV1
+A ⊥ B ≞ <1, 0>
+A ⊥ B | Z ≞ <1, 0>
+|-
+A ∧ B -> Z ≞ TVC
+
+Pr(Z -> A) ≞ Pr(A)
+
+Z -> A ≞ TV1      A ≞ TV1
+Z -> B ≞ TV1
+|-
+Z -> A ∧ B ≞ TVC'
+
+P(A,B|Z) = P(A|Z)*P(B|Z)
+         = P(A,Z)*P(B,Z)/P(Z)²
+
+A ≞ TVA = TVB = TVZ
+
+
+
+
+
+A -> pa
+B -> pb
+W -> w
+
+w?
+
+W: A, B, Pr(A) ∈ [0, 1], Pr(B) ∈ [0, 1], Pr(A|B) ∈ [0, 1], Pr(B|A) ∈ [0, 1]
+w1: Pr(A) ~ TVA, Pr(B) ~ TVB, Pr(A|B) ~ beta(1, 1), Pr(B|A) ~ beta(1, 1)
+Pr(A|B) ~ beta(1, 1) if 0 < pa and max((pa+pb-1)/pa, 0) <= Pr(B|A) <= min(1, pb/pa)
+Pr(B|A) ~ beta(1, 1) if 0 < pb and max((pa+pb-1)/pb, 0) <= Pr(A|B) <= min(1, pb/pa)
+
+Pr(A,B) = if 0 < pa then 
+
+0 <= max(pa+pb-1, 0) <= Pr(A,B) <= min(pa, pb) <= 1
+max((pa+pb-1)/pa, 0) <= Pr(B|A) <= min(1, pb/pa)
+
+
+
+Pr(A) TVA
+Pr(B) TVB
+
+
+Pr(A|B) A -> B ≞ TVAB
+Pr(B|A) B -> A ≞ TVBA
+
+
+A
+B
+|-
+A ∧ B
+
+A
+B
+A->B
+|-
+A ∧ B
+
+----- Probability Theory ------
+
+A and B, C are subsets of 𝛺, i.e. events.  A is independent of B conditioned on C
+
+P(A ⋂ B | C) = P(A|C) * P(B|C)
+
+-------------------------------
+
+------- PLN ---------
+
+(Inheritance C A)
+<<<===>>>
+P(A|C)
+
+(Inheritance A B)
+<<<===>>>
+P(B|A)
+
+(Inheritance C (And A B))
+<<<===>>>
+P(A ⋂ B | C)
+~~~P(C | A ⋂ B)~~~
+
+(Inheritance A C) ≞ <0.5 0.9>
+(Inheritance B C) ≞ <0.5 0.9>
+|-
+(Inheritance (And A B) C) ≞ <0.5 0.8>
+
+(Inheritance C A) ≞ <0.5 0.9>
+(Inheritance C B) ≞ <0.5 0.9>
+|-
+(Inheritance C (And A B)) ≞ <0.25 0.8>
+
+
+(Inheritance B A)
+<<<===>>>
+P(A|B)
+
+(Inheritance 
+
+---------------------
+
+
+
+(Inheritance Black House) ≞ <0.6 0.9>
+(Inheritance Round House) ≞ <0.6 0.9>
+|-
+(Inheritance (And Black Round) House) ≞ <0.6 0.8>
+
+P(House | Black)
+P(House | Round)
+===>
+P(House | (Black And Round))
+=
+P(House, Black, Round) / P(Black, Round)
+=
+P(House, Black, Round) / (P(Black) * P(Round))
+=
+
+
+
+P(House)
+
+
+(Inheritance House Black) ≞ <0.6 0.9>
+(Inheritance House Round) ≞ <0.6 0.9>
+|-
+(Inheritance House (And Black Round)) ≞ <0.36 0.8>
+
+
+A ≞ <s1 c1>
+B ≞ <s2 c2>
+|-
+(And A B) ≞ <s1*s2 c1*c2>
+
+
+
+N = 1 + 4 = 5
+p = 1
+n = 4
+s = p / N = 1 / 5 = 0.2
+m = 0.2 + w*0.5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+===========================================
+
+A ≞ <1 0>
+B ≞ <1 0>
+|-
+(And A B) ≞ TV?  <0 0.1>
+
+1M:
+pa, pb, .... pab ~ S(pa, pb)
+
+pab...
+
+PREMISE... TVs
+|-
+CONCLUSION TVc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+===========================================
+
+P: D -> 𝛺 -> Boolean
+(P d): 𝛺 -> Boolean
+
+𝜔 ∈ 𝛺
+
+
+Xᵢ, i ∈ T
+
+
+Pr(M|D) = Pr(M)*Pr(D|M) / Pr(D)
+Pr(M|D,M ∈ B) = .... 
+
+
+Pr(D'|D) = ∑_.... Pr(M|D) * Pr(D'|M)
+
+Pr(M=(A∧B)|M ∈ B, ) = ∑_D_A
+
+Pr(A|...) = <1, 0.9>
+Pr(B|...) = <0.5, 0.8>
+
+
+
+(Implication A B) <0.7 1>
+(Equivalence B D) <0.1 1>
+(And A D) <....>
+
+(Implication {a} A) <1 1>
+(Implication {a} B) <1 1>
+(Implication {b} A) <1 1>
+(Implication {b} B) <0 1>
+(Implication {c} A) <0 1>
+(Implication {c} B) <0 1>
+
+P(x) = divisible_2(x)
+
+P(x) = prime(x)
+
+P : D -> 𝛺 -> Boolean
+P(x) = if Bernoulli(p, 𝜔) then True else False
+P(x) = if prime(x)
+       then if Bernoulli(0.9) then True else False
+       else True
+
+P(x) = ... 0.5 < 𝜋(x, i) ...
+
+prime(x) = len(factors(x)) = 1
+
+(Implication {1} P) <1 1>
+(Implication {1} (𝜆 x NOT FACTORIZABLE)) <1 1>
+
+P(2) = False
+P(3) = ...
+...
+...
+P(100000000) = True
+(Implication {100000000} (𝜆 x NOT FACTORIZABLE)) <1 1>
+P(100000001) = ?
+
+P, Q, R, ...
+P(x) = 
+Q(x) = 
+
+
+1. --- Hidden Original OKB ---
+
+2. ----- Obervations ---->
+   O1, ..., On
+
+3. ------ PLN ----->
+   Inducing, Deducing, etc, IKB
+
+4. Test by comparing OKB and IKB
+
+5. If good, then it means that your truth value formulas are good
+
+
+General testing framework
+
+1. Parametrized problem KB generator
+   1.a Example inductive: hidden generator -> generates n observations
+   1.b Example deductive: initial kb
+2. Target
+   2.a generator itself
+   2.b conclusion
+3. run PLN, compare result with target
+
+P -> IsEven
+
+{1} -> P
+
+
+.... -> P -> ....
+
+
+----PLN------>
+
+NH <NHTV p>
+
+Implication (𝜆 x NOT FACTORIZABLE) P <0.9 0.99999>  iid
+Implication (Not Prime) P <1 0.99999>
+
+Implication (𝜆 x ...) P <0.5 0.99999>
+Implication (Not Prime) P <1 0.99999>
+
+->
+
+(Implication {a} A) <1 1>
+(Implication {a} B) <1 1>
+(Implication {b} A) <1 1>
+(Implication {b} B) <0 1>
+
+-----PLN------>
+
+(Implication A B) <0.5 0.6>
+
+-----PLN------>
+
+(Implication A B) <0.6 0.7>
+
+-----PLN------>
+
+(And D E) ...
+
+.....
+
+(Or ....)
+
+
+
+
+
+(: ab1 A1 -> B)
+(: ac1 A1 -> C)
+|- (Induction)
+B -> C
+
+(: (Induction ac1 ac2) B -> C)
+
+----------------------
+
+A1
+B
+A1 -> B
+|- (Inversion)
+B -> A1
+
+B
+A1
+C
+B -> A1
+A1 -> C
+|- (Markov Deduction)
+B -> C
+
+A1 ∧ B -> C
+¬A1 ∧ B -> C
+B -> A1
+A1 -> C
+|- (Full Deduction)
+B -> C
+
+Full Induction premises:
+A1 = 1 / N
+B
+A1 -> B
+A1 ∧ B -> C
+¬A1 ∧ B -> C
+A1 -> C
+
+
+A1 -> B
+-------(Inv)
+B -> A1       A1 -> C
+---------------------(Ded)
+       B -> C
+
+
+
+
+
+
+
+A2 -> B
+A2 -> C
+|- (Induction)
+B -> C
+
+
+
+----------------------
+
+
+A2 -> B
+|- (Inversion)
+B -> A2
+
+B -> A2
+A2 -> C
+|- (Deduction)
+B -> C
+
+P(B|A), P(C|B,A), P(C|¬B,A)
+
+A2 -> B
+-------(Inv)
+B -> A2       A2 -> C
+---------------------(Ded)
+       B -> C
+
+
+
+
+
+
+
+
+
+
+
+
+B -> C , via (Induction ab1 ac1)
+B -> C , via (Induction ab2 ac2)
+|- (Revision)
+B -> C
+
+
+B -> C , via prf1
+B -> C , via prf2
+|- (Revision)
+B -> C
+
+prf1 ⊥ prf2
+
+if prf1 < prf2 then prf1 ⊥ prf2
+
+Rain : Event -> Bool
+
+1/N
+
+{1_Jan_2025} -> Rain RTV1
+{1_Jan_2025} -> Wet  WTV2
+{2_Jan_2025} -> Rain ...
+{2_Jan_2025} -> Wet  ...
+
+{event1} -> Rain <1, 1>
+
+
+𝜆x (x == 1_Jan_2025) <1/N ...>
+
+Rain RTV
+===
+Universe -> Rain
+
+
+(Query Rain ?TV)
+
+
+Rain
+Wet
+Rain -> Wet
+|- (Inversion)
+Wet -> Rain
+
+Wet <0, ...>
+Wet -> Rain (Inv)
+|-
+Rain <0, ...>
+
+
+
+
+-------------------------------------------------------------------------------
+event1 -> Predicate
+
+
+{event1} -> Object
+
+I({event1}) → Predicate
+
+I({(, owner object)}) → Own
+
+
+(: $prf Rain $tv)
+
+
+(: $prfP $P $TVP)
+(: $prfE (→ (I (Singleton $e)) $P) $TVE)
+(: $prfI (<ᵢ $prfE $prfP))
+|- (Revision)
+(: $prfP' $P (revision-tv-formula $TVP $TVE))
+
+(<ᵢ $prfE $prfP)
+
+...
+
+(: $prfE $P $TVP)
+(: $prfP (→ (I (Singleton $e)) $P) $TVE)
+(: $prfI (<ᵢ $prfP $prfE))
+|- (Revision)
+(: $prfP' $P (revision-tv-formula $TVP $TVE))
+
+(Revision $prfE $prfP) <ᵢ $prfE
+(Revision $prfE $prfP) <ᵢ $prfP
+
+(evidential_base $prfE) + (evidential_base $prfP)
+
+P → Q (evidential base = VERY FEW)
+
+(: {a} $P $TVP)
+(: {b, c} (→ (I (Singleton $e)) $P) $TVE)
+(: $prfI (<ᵢ {a} {b, c}))
+|- (Revision)
+(: {a, b, c} $P (revision-tv-formula $TVP $TVE))
+
+¬({a, b, c} <ᵢ {a})
+¬({a, b, c} <ᵢ {b, c})
+¬({a} <ᵢ {a, b, c}
+¬({b, c} <ᵢ {a, b, c})
+
+lexical order
+a < b < c < d ...
+<ᵢ
+
+S1 <ᵢ S2 = (last-elemt S1) < (first-eleme S2)
+
+
+
+P: Object -> Bool
+
+$prfa ⊥ $prfb
+$prfa <ᵢ $prfb
+
+
+(: $prfP $P $TVP)
+(: $prfE (→ (I (Singleton $e)) $P) $TVE)
+(: $prfI (Disjoint (evidential_base $prfE) (evidential_base $prfP)))
+|- (Revision)
+(: $prfP $P (revision-tv-formula $TVP $TVE))
+
+a
+b
+c
+d
+
+{a, b} {c, d}
+
+b < c
+
+Disjoint
+
+{a, c} {b, d}
+
+
+
+
+----------------------------------------------------
+(And (Owner $x $d) (Dog $d)) -> (Cool $x)
+
+
+(→ (∃ (∧ Owner (flip (pad Dog)))) Cool)
+
+
+Dog: Object -> Bool
+pad: (Object -> Bool) -> (Object -> Object -> Bool)
+
+(Dog Fido) = True
+<---->
+((pad Dog) Fido ANYTHING) = True
+
+flip (f x y) = (f y x)
+
+
+(∧ (→ P Q) (→ R S))
+
+∃: (->
+
+Nat
+SurReal
+
+
+---------------------------------------------------
+
+𝜎 = robert(.....)
+𝜎' ~= f(𝜎)
+𝜎' ~= 𝛾 * 𝜎
+𝜎' ~= fit(perfect_𝛾) * 𝜎
+
+1<𝛾
+
+Bayes' prior
+𝛼 < 1 ∧ 𝛽 < 1
