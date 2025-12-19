@@ -699,3 +699,27 @@ SurReal
 
 Bayes' prior
 𝛼 < 1 ∧ 𝛽 < 1
+
+-------------------------
+- PLN testing framework -
+-------------------------
+
+Model:
+(: P (-> Nat Bool))
+(= (P $x) (Bernoulli 0.7))
+
+Observer:
+(= (Observe $n) ...)
+---->
+{Z} -> P <1 1>
+{(S Z)} -> P <0 1>
+...
+
+PLN:
+(CallPLN $m)
+
+....
+
+Comparator: P
+P <0.69 0.9999999999>
+----> Second Order Dist  PDF_P(0.7) ~> 0
