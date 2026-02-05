@@ -1178,3 +1178,89 @@ R : D*D -> Bool
 (Sn (, a b)) -> R
 
 ((P * Q) z) = P(x) and Q(y) and z = (, x y)
+
+--------- PLN-Based AA ---------------------------
+
+P : D -> Bool   (non-deterministic)
+Q : D -> Bool
+
+P -> Q ≞ <0.6 0.8>
+Pr(SS(Q)|SS(P)) ≈ 0.6
+
+Pr(B|A) = Pr(A, B) / Pr(A) = 0.6
+
+A, B ⊂ 𝛺
+
+Thry
+Thrm
+----->
+Prf
+
+What axioms and rules are contained in Prf?
+
+SubThry ⊂ Thry
+
+Thrm_i ----> SubThry
+
+SubThry?   Ask PLN
+
+For axiom in Thry:
+  ∃𝜋 𝛩(Thry, 𝜋, Thrm) ∧ Contains(𝜋, axiom) ≞ TV?
+
+𝛩(PC, 𝜋₁, Thrm₁) ∧ Contains(𝜋, axiom)
+𝛩(PC, 𝜋₂, Thrm₂) ∧ Contains(𝜋, axiom)
+𝛩(PC, 𝜋₃, Thrm₃) ∧ Contains(𝜋, axiom)
+...
+𝛩(PC, 𝜋₅₀, Thrm₅₀) ∧ Contains(𝜋, axiom)
+
+
+
+P(𝜏, 𝜋) -> (𝜆 𝜏 𝜋 𝛩(PC, 𝜋, 𝜏) ∧ Contains(𝜋, AXIOM)) ≞ <0.7, 0.9>
+...
+Q(𝜏) ∧ R(𝜋) -> .... = <...>
+
+
+Thrm₅₁
+
+PLN
+---->
+∃𝜋 𝛩(Thry, 𝜋, Thrm) ∧ Contains(𝜋, axiom) ≞ TV?
+∃𝛾 𝛩(𝛾, 𝜋, Thrm) ∧ 𝛾 ⊂ Thry ∧ |𝛾| < 10 ∧ |pi| < 1000 ≞ TV?
+
+
+Axiom₁ TV₁
+...
+Axiom₅₀ TV₅₀
+
+---->
+
+SubThry
+
+-------------------- ITV ----------------------------
+
+
+Step 1:
+
+[L, U]
+-->
+[L1 ,U1] ⊂ [0, 1]
+
+Step 2:
+
+n₁₁, ..., n₁ₘ === means
+
+According to a generalized beta distribution of support [L1, U1]
+
+
+n₁₁ ----> n₂₁₁, ..., n₂₁ₖ === probabilities  f(n₁₁, ...)  ?
+n₁₂ ----> n₂₂₁, ..., n₂₂ₖ
+...
+
+n₂₁₁, ... ---> f(n₂₁₁, ...)
+
+n₁₁ ----> f(n₂₁₁, ...), ..., f(n₂₁ₖ, ...) ---> 𝜇(f, ...)
+...
+...
+...
+
+quantile_discrete(𝜇₁(f, ...), ..., ) ----> [0, Lf] [Lf, Uf] [Uf, 1]
