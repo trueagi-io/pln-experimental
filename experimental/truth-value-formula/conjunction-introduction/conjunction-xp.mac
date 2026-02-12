@@ -7,9 +7,19 @@ load(stringproc)$ /* printf */
 /* Only retain given decimals after point */
 round_dec(x, d) := float(round(x*(10^d))/(10^d));
 
-/* Convert strength and confidence into alpha and beta */
+/* Convert count to confidence and vice versa, using a lookahead k=1.
+The whole derivation including k is:
+   conf = cnt / (cnt + k)
+   (cnt + k) * conf = cnt
+   cnt*conf + k*conf = cnt
+   k*conf = cnt - cnt*conf
+   k*conf = cnt * (1 - conf)
+   cnt = k*conf / (1 - conf)
+*/
 count_to_confidence(c) := c / (c + 1);
 confidence_to_count(c) := c / (1 - c);
+
+/* Convert strength and confidence into alpha and beta */
 stv_to_alpha(strength, confidence) := block([cnt, pc, prior_alpha], cnt: confidence_to_count(confidence), pc: strength*cnt, prior_alpha: 1, prior_alpha + pc);
 stv_to_beta(strength, confidence) := block([cnt, nc, prior_beta], cnt: confidence_to_count(confidence), nc: (1-strength)*c, prior_alpha: 1, prior_alpha + nc);
 
