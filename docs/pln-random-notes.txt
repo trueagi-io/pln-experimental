@@ -1264,3 +1264,29 @@ n₁₁ ----> f(n₂₁₁, ...), ..., f(n₂₁ₖ, ...) ---> 𝜇(f, ...)
 ...
 
 quantile_discrete(𝜇₁(f, ...), ..., ) ----> [0, Lf] [Lf, Uf] [Uf, 1]
+
+--------------------------- Generalized TV ---------------------------
+
+P: D -> Bool
+
+P ≞ STV
+
+STV ~ Distribution over parameter p, such that (Bernoulli p)
+    ~ beta-distribution, 𝛼 and 𝛽
+
+F: D -> ℕ
+
+STV ~ Distribution over parameter p, such that (Binomial p)
+    ~ beta-binomial-distribution, 𝛼 and 𝛽
+
+F ≞ STV
+
+F: D -> ℝ
+
+STV ~ Distribution over parameter p, such that (Gaussian 𝜇 𝜎)
+    ~ ?
+
+f ≞ TVf
+g ≞ TVg
+|-
+(+ f g) ≞ TVfg
