@@ -723,3 +723,69 @@ PLN:
 Comparator: P
 P <0.69 0.9999999999>
 ----> Second Order Dist  PDF_P(0.7) ~> 0
+
+
+
+
+
+P <0.5 0>  ~ beta(1, 1)
+
+
+TV ~ beta(1+n_pos, 1+n_neg)
+
+{(w_smith, ali)} -> Inmovie <0.9 1>
+....
+Inmovie <0.01 0.8>
+
+Inmovie <0.01 0.8>
+|- (Instantiation)
+{(abdu, xevius)} -> Inmovie <0.01 0.8>
+
+P <s c>
+|- (Negation Introduction)
+¬P <1-s c>
+
+P TV
+|- (Absurd Conjunction Introduction)
+P∧¬P <0 1>
+
+Induction and Revision
+{(w_smith, ali)} -> Inmovie <0.9 1>
+...
+
+Inmovie TV1 <0.01 0.93>
+¬Inmovie TV2 <0.99 0.93>
+Inmovie <-> ¬Inmovie <0 0.999>
+|- (Conjunction Introduction)
+Inmovie ∧ ¬Inmovie <0 1>
+
+P <0.3 0.9>
+Q <0.9 0.9>
+P <-> Q <0.7 0.9>
+|- (Conjunction Introduction)
+P ∧ Q
+
+---------------- Making sense goal --------------
+
+C & A => Goal ≞ TV1
+...
+...
+C & A1_asb /& A₂Abs ... => Goal ≞ TV1
+
+C1 & ? => Goal ≞ TV
+|-
+C1 & A₁Mid /& ... => Goal ≞ TV
+...
+...
+
+...
+...
+...
+...
+...
+
+Cn & Reparse /& Rethink => Goal ≞ TV
+
+Cn & GainKnowledge /& Rethink => Goal ≞ TV
+
+Ctx * SuspicionLackOfKnowledge & GainKnowledge ... => Goal ≞ TV
