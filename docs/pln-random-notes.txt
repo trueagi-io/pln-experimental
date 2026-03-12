@@ -770,7 +770,7 @@ P ∧ Q
 C & A => Goal ≞ TV1
 ...
 ...
-C & A1_asb /& A₂Abs ... => Goal ≞ TV1
+C & A₁Asb /& A₂Abs ... => Goal ≞ TV1
 
 C1 & ? => Goal ≞ TV
 |-
@@ -788,4 +788,4 @@ Cn & Reparse /& Rethink => Goal ≞ TV
 
 Cn & GainKnowledge /& Rethink => Goal ≞ TV
 
-Ctx * SuspicionLackOfKnowledge & GainKnowledge ... => Goal ≞ TV
+(Ctx & SuspicionLackOfKnowledge) & GainKnowledge ... => Goal ≞ TV
