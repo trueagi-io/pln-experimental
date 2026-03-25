@@ -1290,3 +1290,67 @@ f ≞ TVf
 g ≞ TVg
 |-
 (+ f g) ≞ TVfg
+
+------------------------------ Alarm ProbLog ---------------------
+
+bur ∧ earth -> alarm ≞ tv1
+bur ∧ ¬earth -> alarm
+¬bur ∧ earth -> alarm
+|-
+alarm -> bur ∧ earth
+alarm -> bur ∧ ¬earth
+alarm -> ¬bur ∧ earth
+|-
+
+alarm -> ¬bur ∧ earth
+|-
+alarm -> bur ∧ ¬earth
+
+A->B ≞ 0.9
+A->¬B ≞ 0.1
+
+P(B|A) = 1 - P(¬B|A)
+
+...
+|-
+alarm -> bur
+
+----------------------------- PLN for ARC ---------------------------
+
+1.
+
+Input       Output
+XYXXXX00 -> YX
+
+2.
+
+YYZXX00Y -> ZY
+
+3.
+
+...
+
+Instances of:
+Input : [0::7] -> Byte
+Output : [0::1] -> Byte
+i₁, o₁
+i₂, o₂
+...
+
+Mapping : ([0::7] -> Byte) -> ([0::1] -> Byte)
+
+Steam of observations:
+{i₁, o₁} → Mapping ≞ <1, 1>
+{i₂, o₂} → Mapping ≞ <1, 1>
+...
+
+|-
+Mapping ↔ (𝜆 xxx body1) ≞ TV1
+Mapping ↔ (𝜆 xxx body2) ≞ TV2
+Mapping ↔ (𝜆 xxx body3) ≞ TV3
+...
+
+|-
+{iₜ, $o} → Mapping ≞ $TV?
+...
+...
