@@ -789,3 +789,42 @@ Cn & Reparse /& Rethink => Goal ≞ TV
 Cn & GainKnowledge /& Rethink => Goal ≞ TV
 
 (Ctx & SuspicionLackOfKnowledge) & GainKnowledge ... => Goal ≞ TV
+
+----------------- Compatible Domain and Continuous ----------------
+
+{John} --> Human ≞ TV    :eternal:
+
+Human : Entity -> Bool
+
+HumanAt : Time x Entity -> Bool
+
+{12345, John} --> HumanAt    :event:
+
+Human ∧ HumanAt
+
+
+Pad : ($a -> Bool) -> $b -> ($a -> $b -> Bool)
+
+(Pad Human 0) ∧ HumanAt
+
+foo : ℝ -> ℝ
+(F2P foo) : ℝ -> ℝ -> Bool
+{0,1} --> (F2P foo) ≞ <1 1>
+...
+...
+...
+|-
+{0.6789, $y} --> (F2P foo) ≞ $tv
+...
+...
+...
+|-
+{0.6789, 0.2345} --> (F2P foo) ≞ <0.0 1>
+...
+{0.6789, 0.4567} --> (F2P foo) ≞ <0.0 1>
+...
+|-
+Dependent Truth Value s(t)
+|-
+{[0.6789, 0.679], $y} -> .... ≞ <0.001 c>
+...
