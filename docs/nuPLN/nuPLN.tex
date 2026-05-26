@@ -644,6 +644,9 @@ Typical priors for the beta distribution includes
 
 \section{Other Inference Rules}
 \subsection{Conjunction Introduction}
+Note: the following is largely outdated by
+\url{https://github.com/trueagi-io/pln-experimental/tree/main/experimental/truth-value-formula/conjunction-introduction}\\
+
 Given $A \measeq TV_A$ and $B \measeq TV_B$ infer $A \land B \measeq
 TV_{A\land B}$.  For that we are going to describe the CDF of
 $TV_{A\land B}$ as it would be obtained by averaging over all possible
@@ -695,39 +698,6 @@ $$Pr(|A\land B|\leq k) = \sum_{i=0}^k
 $$Pr(|A\land B|\leq k) = \sum_{i=0}^k
   \frac{\left (\frac{n}{2}\right )!^4}{i!^2 \times \left
     (\frac{n}{2}-i \right )!^2 \times n!}$$
-
-  Stirling approximation [DeepSeek Alert BEGIN]
-\[ n! \approx \sqrt{2\pi n} \left( \frac{n}{e} \right)^n \]
-  First, approximate \(\left( \frac{n}{2}! \right)^2\):
-
-\[ \left( \frac{n}{2}! \right) \approx \sqrt{2\pi \frac{n}{2}} \left(
-\frac{\frac{n}{2}}{e} \right)^{\frac{n}{2}} \]
-
-Squaring both sides:
-
-\[ \left( \frac{n}{2}! \right)^2 \approx 2\pi \frac{n}{2} \cdot \left(
-\frac{n}{2e} \right)^n = \pi n \cdot \left( \frac{n}{2e} \right)^n \]
-
-Next, approximate \(n!\) using Stirling's formula:
-
-\[ n! \approx \sqrt{2\pi n} \left( \frac{n}{e} \right)^n \]
-
-Now, consider the ratio:
-
-\[ \frac{\left( \frac{n}{2}! \right)^2}{n!} \approx \frac{\pi n \cdot
-\left( \frac{n}{2e} \right)^n}{\sqrt{2\pi n} \left( \frac{n}{e}
-\right)^n} \]
-
-Simplify the expression:
-
-\[ = \frac{\pi n}{\sqrt{2\pi n}} \cdot \left( \frac{n}{2e} \right)^n /
-\left( \frac{n}{e} \right)^n \] \[ = \sqrt{\frac{\pi n}{2}} \cdot
-\left( \frac{1}{2^n} \right) \]
-
-As \(n\) grows large, the term \(2^n\) grows exponentially, while
-\(\sqrt{\frac{\pi n}{2}}\) grows polynomially. Therefore, the ratio
-tends to zero as \(n\) approaches infinity.
-[DeepSeek Alert END]
 
 Let us attempt to define the continuous case
 by studying the limit of the discrete case where $n$ tends to
@@ -900,15 +870,6 @@ $$
      {\sqrt{2\pi}} \delta t$$}
 %% Turn the Riemman sum into an integral
 %% $$=\int_0^x f(t)dt$$
-
-[DeepSeek ALERT BEGIN]
-
-$$
-\int_{0}^{x} \frac{p_A^{p_A} (1 - p_A)^{1 - p_A} p_B^{p_B}
-(1 - p_B)^{1 - p_B}}{t^{t} (p_A - t)^{p_A - t} (p_B - t)^{p_B - t} (1 - p_A - p_B + t)^{1 - p_A - p_B + t} \sqrt{2\pi}} dt
-$$
-
-[DeepSeek ALERT END]
 
 \subsection{Implicant Conjunction Introduction}
 $$A \to C, B \to C \vdash A \land B \to C$$
