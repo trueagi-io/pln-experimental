@@ -882,3 +882,44 @@ P(x, 𝜔) ∈ 𝛺
 
 Float <: Num = (Float ∨ Integer ...)
 
+--------------------------- Revision over mixture of beta distributions -------------
+
+;Revision: PLN Book "5.10.2 A Heuristic Revision Rule for Simple Truth-values", page 116:
+(= (Truth_Revision (stv $f1 $c1) (stv $f2 $c2))
+   (let* (($w1 (Truth_c2w $c1))
+          ($w2 (Truth_c2w $c2))
+          ($w (+ $w1 $w2))
+          ($f (/safe (+ (* $w1 $f1) (* $w2 $f2)) $w))
+          ($c (Truth_w2c $w)))
+         (stv (min 1.0 $f)
+              (min 1.0 (max (max $c $c1) $c2)))))
+
+(= (Truth_Revision (dtv ...) (dtv ...))
+   ?)
+
+(= (dtv2c (dtv ...)) ...)
+
+Revision: STV x STV -> STV
+
+Revision: Mixture(STV1) x Mixture(STV2) -> Mixture(STV)
+
+Mixture(STV1) = c₁₁×stv₁₁ + ... + cᵢ×stvᵢ + ... + c₁ₙ×stv₁ₙ
+Mixture(STV2) = c₂₁×stv₂₁ + ... + cₖ×stvₖ + ... + c₂ₙ×stv₂ₙ
+
+1. No mixture:
+Mixture(STV1) = 1×stv₁₁
+Mixture(STV2) = 1×stv₂₁
+
+2. Mixture:
+Mixture(STV1) = c₁₁×stv₁₁ + ... + cᵢ×stvᵢ + ... + c₁ₙ×stv₁ₙ
+Mixture(STV2) = c₂₁×stv₂₁ + ... + cₖ×stvₖ + ... + c₂ₙ×stv₂ₙ
+
+stvᵢ, stvₖ -> revision(stvᵢ, stvₖ)
+...
+...
+...
+Mixture(STV_Conclusion) = revision(stvᵢ₁, stvₖ₁) + ... + revision(stvᵢₘ, stvₖₘ)
+              = compress(revision(stvᵢ₁, stvₖ₁) + ... + revision(stvᵢₘ, stvₖₘ))
+              = c₃₁×stv₃₁ + ... + c₃ₙ×stv₃ₙ
+
+Revision : BetaD x BetaD -> BetaD
