@@ -828,3 +828,57 @@ Dependent Truth Value s(t)
 |-
 {[0.6789, 0.679], $y} -> .... ≞ <0.001 c>
 ...
+
+--------------- Various ways to reprent a distribution ---------------
+
+D == Samples, ∞ bins -> mean, variance, skewness, kurtosis
+  == N=4 moments, mean, variance, 2nd order variance, etc
+  == histogram, N bins
+  == mixture of N/2 beta distributions
+
+Conjunction(D₁, D₂) = D₃
+
+Deduction(D₁, D₂, ...) = D₃
+
+Revision(D₃, ...) =
+
+To avoid sampling
+1. Derive N moments of conclusions of inference rule given N moments of premises
+2. Fit mixture of N/2 beta distributions
+𝛼ᵢ and 𝛽ᵢ
+
+---------------- ProbLog to PLN-------------------------------
+
+0.3::someone_is_stressed :- person(X).
+0.8::someone_is_stressed :- chased(X).
+
+someone_is_stressed ∧ person(John) ∧ chased(John)
+...
+...
+...
+someone_is_stressed ...
+
+
+
+Query(someone_is_stressed::0.9999999)
+
+PLN:
+
+person(X) ; chased(X) --> someone_is_stressed <TV>
+TV = PDF(p1, p2, K)
+
+0.3::someone_is_stressed :- person(X).
+(person(John) ∨ ... ∨ person(Alice)) --> someone_is_stressed <0.3, 0.9>
+
+(∃X person(X)) --> someone_is_stressed <0.3, 0.9>
+
+P --> Q
+
+P : Float x 𝛺
+P : Num + some constraints
+Q : Num x 𝛺
+
+P(x, 𝜔) ∈ 𝛺
+
+Float <: Num = (Float ∨ Integer ...)
+
