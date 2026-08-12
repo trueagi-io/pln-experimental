@@ -923,3 +923,53 @@ Mixture(STV_Conclusion) = revision(stvᵢ₁, stvₖ₁) + ... + revision(stvᵢ
               = c₃₁×stv₃₁ + ... + c₃ₙ×stv₃ₙ
 
 Revision : BetaD x BetaD -> BetaD
+
+------------- Revision Paradox -------------
+
+    ---------------------(E2)
+    Smoke ≞ (stv 0.1 0.9)
+------------------------------(Probabilistic Instantiation)   --------------------------(E1)
+{Bob} -> Smoke ≞ (stv 0.1 0.9)                                {Bob} -> Smoke ≞ (stv 1 1)
+----------------------------------------------------------------------------------------(Revision)
+                                {Bob} -> Smoke ≞ (stv 1 1)
+
+    ---------------------(E4)
+    Fat ≞ (stv 0.1 0.9)
+------------------------------(Probabilistic Instantiation)   --------------------------(E3)
+{Tom} -> Fat ≞ (stv 0.1 0.9)                                  {Tom} -> Fat ≞ (stv 1 0.8)
+----------------------------------------------------------------------------------------(Revision)
+                                {Tom} -> Fat ≞ (stv 0.6 0.8)
+
+
+
+Universe -> Smoke ≞ (stv 0.1 0.9)   Universe -> {Bob} ≞ (stv 0.01 0.9)
+----------------------------------------------------------------------(Induction)
+                       {Bob} -> Smoke ≞ (stv 0.1 0.9)
+
+Universe ≞ (stv 1 0.9)
+|- ?
+{Bob} -> Universe ≞ (stv 1 0.9)
+
+{Bob} -> Universe ≞ (stv 1 1)  {Tom} -> Universe ≞ (stv 1 1)  {Bob} ≞ (stv 0.01 1) {Tom} ≞ (stv 0.01 1) Universe ≞ (stv 1 1)
+----------------------------------------------------------------------------------------------------------------------------(Abduction)
+                                                 {Bob} -> {Tom} ≞ (stv ? 0.5)
+
+       $x != $y
+-----------------------(Symbolic Difference)
+{$x} -> {$y} ≞ (stv 0 1)
+
+Universe -> {Bob} ≞ (stv 0.01 0.9)      Universe -> {Tom} ≞ (stv 0.01 0.9)
+--------------------------------------------------------------------------(Induction)
+                              {Bob} -> {Tom}
+
+
+
+P -> Universe    Q -> Universe
+
+P : Domain -> Bool
+Q : Domain -> Bool
+
+Domain = { ..., Bob, Tom, ... }
+
+if e1 = e2 then
+{e1, e2} = {e1} = {e2}
