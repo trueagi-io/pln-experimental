@@ -973,3 +973,428 @@ Domain = { ..., Bob, Tom, ... }
 
 if e1 = e2 then
 {e1, e2} = {e1} = {e2}
+
+---- ProbLog to PLN ----
+
+relevant_gene(X, Y) :- eqtl_association(X, Y)
+
+(≞ (→ eqtl_association relevant_gene) (stv 0.0176 0.1))
+
+------------------
+
+regularity_effect(S, G) :-
+  in_regularity_region(S, Enh),
+  associated_with(Enh, G).
+
+(≞ (→ (∃ (∧ (flip in_regularity_region) associated_with)) eqtl_association regularity_effect) (stv 0.0176 0.1))
+
+
+
+------------- Temporal connectors ---------
+
+A ∧ₜ B : T -> Bool
+A ∧₍ₜ,ₛ₎ B : T -> Bool
+
+P ≞ TV₁
+(P t₁) ≞ TV₁
+
+P : Time -> Location -> Bool
+(P t₁) : Location -> Bool
+
+Q : Time -> Location -> Bool
+
+P ∧ Q : Time -> Location -> Bool
+P ∧d Q : Time -> Location -> Bool
+===
+𝜆 t, l P(t, l) ∧ (Q(t + d1, l) ∨ Q(t + d1 + ..., l) ∨ Q(t + d2, l))
+
+P ->[d1, d2] Q
+P -> (Lag(Q, d1) ∨ Lag(Q, d1 + ...), ∨ Lag(Q, d2))
+
+P ->d1 Q <0.9, 0.9>
+P ->[d1, d2] Q <0.99, 0.9>
+
+-------------------------------------------------
+
+D -> Bool
+
+P1:30pm-2026-01-08 : D -> Bool
+
+P R P1:30pm-2026-01-08
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------
+
+P : D -> Bool
+Q : D -> Bool
+...
+
+
+(Implication P Q) ≞ TVPQ
+
+<====>
+
+(Inheritance (SatSet P) (SatSet Q)) ≞ TVPQ
+A = (SatSet P)
+B = (SatSet Q)
+
+TVPQ.s = lim{ₙ -> ∞} (∑ₓ∈[D₁, Dₙ] (P(x) ∧ Q(x)) / ∑ₓ∈[D₁, Dₙ] P(x))
+
+Pr(B|A) = TVPQ.s
+
+Pr(B|A) = Pr(B∩A)/Pr(A)
+
+P : Nat * String -> Bool
+Q : Nat * String -> Bool
+
+Implication P Q
+
+Implication (Board ...) (Board ...)
+
+P → Q ≞ TVPQ
+Q → R ≞ TVRQ
+
+
+Deduction:
+P → Q ≞ TVPQ
+Q → R ≞ TVRQ
+|-
+P → R ≞ TV?
+
+Induction:
+P → R ≞ TVPR
+P → Q ≞ TVPQ
+|-
+R → Q ≞ TV?
+
+Abduction:
+P → R ≞ TVPR
+P → Q ≞ TVPQ
+|-
+R → Q ≞ TV?
+
+
+P: Board -> Bool
+
+{(X O _) ... ... } ⊂ A ⊂ Board ≞ TVA
+{(X O _) ... ... } ⊂ B ⊂ Board ≞ TVB
+
+Inheritance
+  {(X O _) ... ... }
+  A
+≞ TVA1
+<=========>
+(X O _) ... ... ∈ A
+
+Inh A B
+
+1)
+
+Inheritance
+  A
+  HorizontalLineOfX
+≞ TVAH1
+
+Inheritance
+  B
+  HorizontalLineOfX
+≞ TVBH1
+
+2)
+
+Inheritance
+  A
+  ThereIsOInOneCorner
+≞ TVAT1
+
+Inheritance
+  B
+  ThereIsOInOneCorner
+≞ TVAT1
+
+3)
+
+...
+
+Revision
+|- Inheritance A B
+
+------------------------------ PLN-based next token predicator ------------------------------
+
+Reasoning based direct next token predictor:
+
+T1 /& T2 ... /& Tn -/-> Tn+1 ≞ TV
+
+(T1 /& T2 ... /& Tn) & (<=> (LLM T1 /& T2 ... /& Tn) $Tn+1) -/-> $Tn+1 ≞ <0.9 0.7>
+
+Reasoning based indirect (with intermediate logical representation) next token predictor:
+
+T1 /& T2 ... /& Tn -/-> Tn+1 ≞ TV
+
+(T1 /& T2 ... /& Tn) & (<=> (LLM T1 /& T2 ... /& Tn) $Tn+1) -/-> $Tn+1 ≞ <0.9 0.7>
+
+($Seq) & (<=> (LLM $Seq + $PROMPT) $LR) -> $LR ≞ <0.9 0.7>
+
+LR1 = Q
+LR2 = ¬Q
+...
+
+-/-> Tn+1
+
+------------------------------ PLN Implication instead of Evaluation ------------
+
+((Sn a) a) = True
+((Sn a) _) = False
+
+R : D1 * D2 -> Bool
+
+R : D*D -> Bool
+
+(Sn a) * (Sn b) -> <
+
+(Sn a) * (Sn b) -> U
+(Sn b) * (Sn a) -> U
+
+(R a b)
+
+(Sn a) * (Sn b) -> R
+
+(Sn (, a b)) -> R
+
+((P * Q) z) = P(x) and Q(y) and z = (, x y)
+
+--------- PLN-Based AA ---------------------------
+
+P : D -> Bool   (non-deterministic)
+Q : D -> Bool
+
+P -> Q ≞ <0.6 0.8>
+Pr(SS(Q)|SS(P)) ≈ 0.6
+
+Pr(B|A) = Pr(A, B) / Pr(A) = 0.6
+
+A, B ⊂ 𝛺
+
+Thry
+Thrm
+----->
+Prf
+
+What axioms and rules are contained in Prf?
+
+SubThry ⊂ Thry
+
+Thrm_i ----> SubThry
+
+SubThry?   Ask PLN
+
+For axiom in Thry:
+  ∃𝜋 𝛩(Thry, 𝜋, Thrm) ∧ Contains(𝜋, axiom) ≞ TV?
+
+𝛩(PC, 𝜋₁, Thrm₁) ∧ Contains(𝜋, axiom)
+𝛩(PC, 𝜋₂, Thrm₂) ∧ Contains(𝜋, axiom)
+𝛩(PC, 𝜋₃, Thrm₃) ∧ Contains(𝜋, axiom)
+...
+𝛩(PC, 𝜋₅₀, Thrm₅₀) ∧ Contains(𝜋, axiom)
+
+
+
+P(𝜏, 𝜋) -> (𝜆 𝜏 𝜋 𝛩(PC, 𝜋, 𝜏) ∧ Contains(𝜋, AXIOM)) ≞ <0.7, 0.9>
+...
+Q(𝜏) ∧ R(𝜋) -> .... = <...>
+
+
+Thrm₅₁
+
+PLN
+---->
+∃𝜋 𝛩(Thry, 𝜋, Thrm) ∧ Contains(𝜋, axiom) ≞ TV?
+∃𝛾 𝛩(𝛾, 𝜋, Thrm) ∧ 𝛾 ⊂ Thry ∧ |𝛾| < 10 ∧ |pi| < 1000 ≞ TV?
+
+
+Axiom₁ TV₁
+...
+Axiom₅₀ TV₅₀
+
+---->
+
+SubThry
+
+-------------------- ITV ----------------------------
+
+
+Step 1:
+
+[L, U]
+-->
+[L1 ,U1] ⊂ [0, 1]
+
+Step 2:
+
+n₁₁, ..., n₁ₘ === means
+
+According to a generalized beta distribution of support [L1, U1]
+
+
+n₁₁ ----> n₂₁₁, ..., n₂₁ₖ === probabilities  f(n₁₁, ...)  ?
+n₁₂ ----> n₂₂₁, ..., n₂₂ₖ
+...
+
+n₂₁₁, ... ---> f(n₂₁₁, ...)
+
+n₁₁ ----> f(n₂₁₁, ...), ..., f(n₂₁ₖ, ...) ---> 𝜇(f, ...)
+...
+...
+...
+
+quantile_discrete(𝜇₁(f, ...), ..., ) ----> [0, Lf] [Lf, Uf] [Uf, 1]
+
+--------------------------- Generalized TV ---------------------------
+
+P: D -> Bool
+
+P ≞ STV
+
+STV ~ Distribution over parameter p, such that (Bernoulli p)
+    ~ beta-distribution, 𝛼 and 𝛽
+
+F: D -> ℕ
+
+STV ~ Distribution over parameter p, such that (Binomial p)
+    ~ beta-binomial-distribution, 𝛼 and 𝛽
+
+F ≞ STV
+
+F: D -> ℝ
+
+STV ~ Distribution over parameter p, such that (Gaussian 𝜇 𝜎)
+    ~ ?
+
+f ≞ TVf
+g ≞ TVg
+|-
+(+ f g) ≞ TVfg
+
+------------------------------ Alarm ProbLog ---------------------
+
+bur ∧ earth -> alarm ≞ tv1
+bur ∧ ¬earth -> alarm
+¬bur ∧ earth -> alarm
+|-
+alarm -> bur ∧ earth
+alarm -> bur ∧ ¬earth
+alarm -> ¬bur ∧ earth
+|-
+
+alarm -> ¬bur ∧ earth
+|-
+alarm -> bur ∧ ¬earth
+
+A->B ≞ 0.9
+A->¬B ≞ 0.1
+
+P(B|A) = 1 - P(¬B|A)
+
+...
+|-
+alarm -> bur
+
+----------------------------- PLN for ARC ---------------------------
+
+1.
+
+Input       Output
+XYXXXX00 -> YX
+
+2.
+
+YYZXX00Y -> ZY
+
+3.
+
+...
+
+Instances of:
+Input : [0::7] -> Byte
+Output : [0::1] -> Byte
+i₁, o₁
+i₂, o₂
+...
+
+Mapping : ([0::7] -> Byte) -> ([0::1] -> Byte)
+
+Steam of observations:
+{i₁, o₁} → Mapping ≞ <1, 1>
+{i₂, o₂} → Mapping ≞ <1, 1>
+...
+
+|-
+Mapping ↔ (𝜆 xxx body1) ≞ TV1
+Mapping ↔ (𝜆 xxx body2) ≞ TV2
+Mapping ↔ (𝜆 xxx body3) ≞ TV3
+...
+
+|-
+{iₜ, $o} → Mapping ≞ $TV?
+...
+...
+
+------------------------ PLNizing ProbLog ---------------------------
+
+Sample Space : 𝛺 = Model x Data
+
+P(|)
+
+
+PLN Statement: logic
+PLN Judgement: TV attached to PLN statement
+
+Implication P Q ≞ TV
+
+Model = ProbLog programs
+Data = Is generated by a model
+
+Head : 0.5, Tail : 0.5.
+
+Head
+Tail
+Tail
+Head
+
+P1, P2, P3, P4, ..., ... : closed world
+
+PLN1, PLN2, ..., ... : open world
+
+Xₜ |- Xₜ₊₁
+
+P(Xₜ₊₁ | Xₜ, KB) = ∑ᵢ
+
+PredicativeImplication Y X ≞ <0.9, 0.99>
+
+
+
+H, T, T
+
+
+
+H ≞ <s c>
+------->
+{H, T} ~ Bernoulli(p), p ~ beta(𝛼, 𝛽)
+
+P(𝜋∈𝛱)
