@@ -973,3 +973,208 @@ Domain = { ..., Bob, Tom, ... }
 
 if e1 = e2 then
 {e1, e2} = {e1} = {e2}
+
+---- ProbLog to PLN ----
+
+relevant_gene(X, Y) :- eqtl_association(X, Y)
+
+(≞ (→ eqtl_association relevant_gene) (stv 0.0176 0.1))
+
+------------------
+
+regularity_effect(S, G) :-
+  in_regularity_region(S, Enh),
+  associated_with(Enh, G).
+
+(≞ (→ (∃ (∧ (flip in_regularity_region) associated_with)) eqtl_association regularity_effect) (stv 0.0176 0.1))
+
+
+
+------------- Temporal connectors ---------
+
+A ∧ₜ B : T -> Bool
+A ∧₍ₜ,ₛ₎ B : T -> Bool
+
+P ≞ TV₁
+(P t₁) ≞ TV₁
+
+P : Time -> Location -> Bool
+(P t₁) : Location -> Bool
+
+Q : Time -> Location -> Bool
+
+P ∧ Q : Time -> Location -> Bool
+P ∧d Q : Time -> Location -> Bool
+===
+𝜆 t, l P(t, l) ∧ (Q(t + d1, l) ∨ Q(t + d1 + ..., l) ∨ Q(t + d2, l))
+
+P ->[d1, d2] Q
+P -> (Lag(Q, d1) ∨ Lag(Q, d1 + ...), ∨ Lag(Q, d2))
+
+P ->d1 Q <0.9, 0.9>
+P ->[d1, d2] Q <0.99, 0.9>
+
+-------------------------------------------------
+
+D -> Bool
+
+P1:30pm-2026-01-08 : D -> Bool
+
+P R P1:30pm-2026-01-08
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------
+
+P : D -> Bool
+Q : D -> Bool
+...
+
+
+(Implication P Q) ≞ TVPQ
+
+<====>
+
+(Inheritance (SatSet P) (SatSet Q)) ≞ TVPQ
+A = (SatSet P)
+B = (SatSet Q)
+
+TVPQ.s = lim{ₙ -> ∞} (∑ₓ∈[D₁, Dₙ] (P(x) ∧ Q(x)) / ∑ₓ∈[D₁, Dₙ] P(x))
+
+Pr(B|A) = TVPQ.s
+
+Pr(B|A) = Pr(B∩A)/Pr(A)
+
+P : Nat * String -> Bool
+Q : Nat * String -> Bool
+
+Implication P Q
+
+Implication (Board ...) (Board ...)
+
+P → Q ≞ TVPQ
+Q → R ≞ TVRQ
+
+
+Deduction:
+P → Q ≞ TVPQ
+Q → R ≞ TVRQ
+|-
+P → R ≞ TV?
+
+Induction:
+P → R ≞ TVPR
+P → Q ≞ TVPQ
+|-
+R → Q ≞ TV?
+
+Abduction:
+P → R ≞ TVPR
+P → Q ≞ TVPQ
+|-
+R → Q ≞ TV?
+
+
+P: Board -> Bool
+
+{(X O _) ... ... } ⊂ A ⊂ Board ≞ TVA
+{(X O _) ... ... } ⊂ B ⊂ Board ≞ TVB
+
+Inheritance
+  {(X O _) ... ... }
+  A
+≞ TVA1
+<=========>
+(X O _) ... ... ∈ A
+
+Inh A B
+
+1)
+
+Inheritance
+  A
+  HorizontalLineOfX
+≞ TVAH1
+
+Inheritance
+  B
+  HorizontalLineOfX
+≞ TVBH1
+
+2)
+
+Inheritance
+  A
+  ThereIsOInOneCorner
+≞ TVAT1
+
+Inheritance
+  B
+  ThereIsOInOneCorner
+≞ TVAT1
+
+3)
+
+...
+
+Revision
+|- Inheritance A B
+
+------------------------------ PLN-based next token predicator ------------------------------
+
+Reasoning based direct next token predictor:
+
+T1 /& T2 ... /& Tn -/-> Tn+1 ≞ TV
+
+(T1 /& T2 ... /& Tn) & (<=> (LLM T1 /& T2 ... /& Tn) $Tn+1) -/-> $Tn+1 ≞ <0.9 0.7>
+
+Reasoning based indirect (with intermediate logical representation) next token predictor:
+
+T1 /& T2 ... /& Tn -/-> Tn+1 ≞ TV
+
+(T1 /& T2 ... /& Tn) & (<=> (LLM T1 /& T2 ... /& Tn) $Tn+1) -/-> $Tn+1 ≞ <0.9 0.7>
+
+($Seq) & (<=> (LLM $Seq + $PROMPT) $LR) -> $LR ≞ <0.9 0.7>
+
+LR1 = Q
+LR2 = ¬Q
+...
+
+-/-> Tn+1
+
+------------------------------ PLN Implication instead of Evaluation ------------
+
+((Sn a) a) = True
+((Sn a) _) = False
+
+R : D1 * D2 -> Bool
+
+R : D*D -> Bool
+
+(Sn a) * (Sn b) -> <
+
+(Sn a) * (Sn b) -> U
+(Sn b) * (Sn a) -> U
+
+(R a b)
+
+(Sn a) * (Sn b) -> R
+
+(Sn (, a b)) -> R
+
+((P * Q) z) = P(x) and Q(y) and z = (, x y)
